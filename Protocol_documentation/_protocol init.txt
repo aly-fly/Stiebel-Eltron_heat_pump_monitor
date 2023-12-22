@@ -1,0 +1,33 @@
+        IOCTL_SERIAL_SET_BAUD_RATE - Request sets the baud rate on a COM port. Serial verifies the specified baud rate 
+            BaudRate - 2400 
+---------------------------------------------------------------------------------- 
+        IOCTL_SERIAL_SET_RTS - Request sets RTS 
+---------------------------------------------------------------------------------- 
+        IOCTL_SERIAL_CLR_DTR - Request clears the DTR control signal.  
+---------------------------------------------------------------------------------- 
+        IOCTL_SERIAL_SET_LINE_CONTROL - Request sets the line control register 
+            StopBits   - 2 (2 stop bits) 
+            Parity     - 2 (EVEN_PARITY) 
+            WordLength - 8 
+---------------------------------------------------------------------------------- 
+        IOCTL_SERIAL_SET_CHARS - Request sets the special characters that Serial uses for handshake flow control 
+            EofChar   - 0 
+            ErrorChar - 0 
+            BreakChar - 0 
+            EventChar - 0 
+            XonChar   - 17 
+            XoffChar  - 19 
+---------------------------------------------------------------------------------- 
+        IOCTL_SERIAL_SET_HANDFLOW - Request sets the configuration of handshake flow control 
+            ControlHandShake - 0x00  
+            FlowReplace      - 0x40 (SERIAL_RTS_CONTROL) 
+            XonLimit         - 2048 
+            XoffLimit        - 512 
+---------------------------------------------------------------------------------- 
+        IOCTL_SERIAL_SET_TIMEOUTS - Request sets the timeout value's that the driver uses with read and write requests 
+            ReadIntervalTimeout         - 0 
+            ReadTotalTimeoutMultiplier  - 5 
+            ReadTotalTimeoutConstant    - 1000 
+            WriteTotalTimeoutMultiplier - 5 
+            WriteTotalTimeoutConstant   - 200 
+---------------------------------------------------------------------------------- 

@@ -1,0 +1,29 @@
+TX;RX;source;destination;query;circuit;register;value;checksum;;source;destination;query;circuit;register;value;checksum;
+0d 00 0d 01 00 0b 00 00 00 00 00 26 ; 55 55 55 55 55 55 55 55 55 55 03 52 ;'0d PC;'0d PC;'01 Read;'000b;'0000;'0000;'0026;;'55;'55;'55;'5555;'5555;'5555;'0352
+0d 00 0c 01 00 0b 00 00 00 00 00 25 ; ;'0d PC;'0c mixer;'01 Read;'000b;'0000;'0000;'0025;;Error data length
+0d 00 0c 01 01 0b 00 00 00 00 00 26 ; 0c 01 0d 02 00 0b 80 00 00 00 00 a7 ;'0d PC;'0c mixer;'01 Read;'010b;'0000;'0000;'0026;;'0c mixer;'0d PC;'02 response;'000b;'8000;'0000;'00a7
+0d 00 0c 01 02 0b 00 00 00 00 00 27 ; 0c 02 0d 02 00 0b 80 00 00 00 00 a8 ;'0d PC;'0c mixer;'01 Read;'020b;'0000;'0000;'0027;;'0c mixer;'0d PC;'02 response;'000b;'8000;'0000;'00a8
+0d 00 06 01 00 0b 00 00 00 00 00 1f ; ;'0d PC;'06 controller;'01 Read;'000b;'0000;'0000;'001f;;Error data length
+0d 00 06 01 01 0b 00 00 00 00 00 20 ; 06 01 0d 02 00 0b 80 00 00 00 00 a1 ;'0d PC;'06 controller;'01 Read;'010b;'0000;'0000;'0020;;'06 controller;'0d PC;'02 response;'000b;'8000;'0000;'00a1
+0d 00 06 01 02 0b 00 00 00 00 00 21 ; 06 02 0d 02 00 0b 80 00 00 00 00 a2 ;'0d PC;'06 controller;'01 Read;'020b;'0000;'0000;'0021;;'06 controller;'0d PC;'02 response;'000b;'8000;'0000;'00a2
+0d 00 03 01 00 0b 00 00 00 00 00 1c ; 03 00 0d 02 00 0b 80 00 00 00 00 9d ;'0d PC;'03 boiler;'01 Read;'000b;'0000;'0000;'001c;;'03 boiler;'0d PC;'02 response;'000b;'8000;'0000;'009d
+0d 00 09 01 00 0b 00 00 00 00 00 22 ; 09 00 0d 02 00 0b 80 00 00 00 00 a3 ;'0d PC;'09 Manager;'01 Read;'000b;'0000;'0000;'0022;;'09 Manager;'0d PC;'02 response;'000b;'8000;'0000;'00a3
+0d 00 0a 01 00 0b 00 00 00 00 00 23 ; 0a 00 0d 02 00 fa 00 0b 80 00 01 9e ;'0d PC;'0a Heating;'01 Read;'000b;'0000;'0000;'0023;;'0a Heating;'0d PC;'02 response;'00fa General;'000b ;'8000;'019e
+0d 00 0a 01 01 0b 00 00 00 00 00 24 ; ;'0d PC;'0a Heating;'01 Read;'010b;'0000;'0000;'0024;;Error data length
+0d 00 0a 01 02 0b 00 00 00 00 00 25 ; ;'0d PC;'0a Heating;'01 Read;'020b;'0000;'0000;'0025;;Error data length
+0d 00 0c 01 01 fa 02 f3 00 00 02 0a ; 0c 01 0d 02 00 fa 02 f3 03 00 02 0e ;'0d PC;'0c mixer;'01 Read;'01fa HC 1;'02f3 REQUIREMENT_POST-HEATING;'0000;'020a;;'0c mixer;'0d PC;'02 response;'00fa General;'02f3 REQUIREMENT_POST-HEATING;'0300;'020e
+0d 00 0c 01 02 fa 02 f3 00 00 02 0b ; 0c 02 0d 02 00 fa 02 f3 03 00 02 0f ;'0d PC;'0c mixer;'01 Read;'02fa;'02f3 REQUIREMENT_POST-HEATING;'0000;'020b;;'0c mixer;'0d PC;'02 response;'00fa General;'02f3 REQUIREMENT_POST-HEATING;'0300;'020f
+0d 00 06 01 01 fa 02 f3 00 00 02 04 ; 06 01 0d 02 00 fa 02 f3 03 00 02 08 ;'0d PC;'06 controller;'01 Read;'01fa HC 1;'02f3 REQUIREMENT_POST-HEATING;'0000;'0204;;'06 controller;'0d PC;'02 response;'00fa General;'02f3 REQUIREMENT_POST-HEATING;'0300;'0208
+0d 00 06 01 02 fa 02 f3 00 00 02 05 ; 06 02 0d 02 00 fa 02 f3 03 00 02 09 ;'0d PC;'06 controller;'01 Read;'02fa;'02f3 REQUIREMENT_POST-HEATING;'0000;'0205;;'06 controller;'0d PC;'02 response;'00fa General;'02f3 REQUIREMENT_POST-HEATING;'0300;'0209
+0d 00 03 01 00 fa 02 f3 00 00 02 00 ; 03 00 0d 02 00 fa 02 f3 03 00 02 04 ;'0d PC;'03 boiler;'01 Read;'00fa General;'02f3 REQUIREMENT_POST-HEATING;'0000;'0200;;'03 boiler;'0d PC;'02 response;'00fa General;'02f3 REQUIREMENT_POST-HEATING;'0300;'0204
+0d 00 09 01 00 fa 02 f3 00 00 02 06 ; 09 00 0d 02 00 fa 02 f3 03 00 02 0a ;'0d PC;'09 Manager;'01 Read;'00fa General;'02f3 REQUIREMENT_POST-HEATING;'0000;'0206;;'09 Manager;'0d PC;'02 response;'00fa General;'02f3 REQUIREMENT_POST-HEATING;'0300;'020a
+0d 00 0a 01 00 fa 02 f3 00 00 02 07 ; 0a 00 0d 02 00 fa 02 f3 0a 00 02 12 ;'0d PC;'0a Heating;'01 Read;'00fa General;'02f3 REQUIREMENT_POST-HEATING;'0000;'0207;;'0a Heating;'0d PC;'02 response;'00fa General;'02f3 REQUIREMENT_POST-HEATING;'0a00;'0212
+0d 00 0c 01 01 10 00 00 00 00 00 2b ; 0c 01 0d 02 00 10 80 00 00 00 00 ac ;'0d PC;'0c mixer;'01 Read;'0110;'0000;'0000;'002b;;'0c mixer;'0d PC;'02 response;'0010;'8000;'0000;'00ac
+0d 00 0c 01 01 fa 01 99 00 00 01 af ; 0c 01 0d 02 00 fa 01 99 01 4b 01 fc ;'0d PC;'0c mixer;'01 Read;'01fa HC 1;'0199 SOFTWARE_NUMBER;'0000;'01af;;'0c mixer;'0d PC;'02 response;'00fa General;'0199 SOFTWARE_NUMBER;'014b;'01fc
+0d 00 0c 01 01 fa 01 9a 00 00 01 b0 ; 0c 01 0d 02 00 fa 01 9a 00 07 01 b8 ;'0d PC;'0c mixer;'01 Read;'01fa HC 1;'019a SOFTWARE_VERSION;'0000;'01b0;;'0c mixer;'0d PC;'02 response;'00fa General;'019a SOFTWARE_VERSION;'0007;'01b8
+0d 00 0a 01 00 10 00 00 00 00 00 28 ; 0a 00 0d 02 00 fa 00 10 80 00 01 a3 ;'0d PC;'0a Heating;'01 Read;'0010;'0000;'0000;'0028;;'0a Heating;'0d PC;'02 response;'00fa General;'0010 DEVICE CONFIGURATION;'8000;'01a3
+0d 00 0a 01 00 fa 01 99 00 00 01 ac ; 0a 00 0d 02 00 fa 01 99 01 89 02 37 ;'0d PC;'0a Heating;'01 Read;'00fa General;'0199 SOFTWARE_NUMBER;'0000;'01ac;;'0a Heating;'0d PC;'02 response;'00fa General;'0199 SOFTWARE_NUMBER;'0189;'0237
+0d 00 0a 01 00 fa 01 9a 00 00 01 ad ; 0a 00 0d 02 00 fa 01 9a 00 02 01 b0 ;'0d PC;'0a Heating;'01 Read;'00fa General;'019a SOFTWARE_VERSION;'0000;'01ad;;'0a Heating;'0d PC;'02 response;'00fa General;'019a SOFTWARE_VERSION;'0002;'01b0
+0d 00 00 01 00 fa 0a 26 00 00 01 38 ; 00 00 0d 02 00 fa 0a 26 00 00 01 39 ;'0d PC;'00 direct;'01 Read;'00fa General;'0a26 BUS ERROR;'0000;'0138;;'00 direct;'0d PC;'02 response;'00fa General;'0a26 BUS ERROR;'0000;'0139
+0d 00 00 01 00 fa 0a 26 00 00 01 38 ; 00 00 0d 02 00 fa 0a 26 00 00 01 39 ;'0d PC;'00 direct;'01 Read;'00fa General;'0a26 BUS ERROR;'0000;'0138;;'00 direct;'0d PC;'02 response;'00fa General;'0a26 BUS ERROR;'0000;'0139
+

@@ -1,0 +1,44 @@
+standby 256     0D 00 03 01 00 FA 01 12 80 08 01 A6 03 00 0D 02 00 FA 01 12 01 00 01 20 
+automatic 512   0D 00 03 01 00 FA 01 12 80 08 01 A6 03 00 0D 02 00 FA 01 12 02 00 01 21 
+day 768         0D 00 03 01 00 FA 01 12 80 08 01 A6 03 00 0D 02 00 FA 01 12 03 00 01 22 
+night 1024      0D 00 03 01 00 FA 01 12 80 08 01 A6 03 00 0D 02 00 FA 01 12 04 00 01 23 
+water  1280     0D 00 03 01 00 FA 01 12 80 08 01 A6 03 00 0D 02 00 FA 01 12 05 00 01 24 
+emergency 0     0D 00 03 01 00 FA 01 12 80 08 01 A6 03 00 0D 02 00 FA 01 12 00 00 01 1F 
+
+
+Error reading data.
+
+Error reading data.
+0D 00 0C 01 02 FA 00 52 80 08 01 F0 
+Incorrect QRY in the response!
+Error reading data.
+0D 00 03 01 00 FA 00 0C 80 08 01 9F 
+Error reading data.
+0D 00 03 01 00 FA 01 D5 80 08 02 69 
+Error reading data.
+0D 00 03 01 00 FA 00 0F 80 08 01 A2 
+Error reading data.
+0D 00 03 01 00 FA 00 53 80 08 01 E6 
+Error reading data.
+0D 00 06 01 01 FA 00 11 80 08 01 A8 
+Error reading data.
+0D 00 03 01 00 FA 00 0F 80 08 01 A2 
+Error reading data.
+0D 00 03 01 00 FA 00 63 80 08 01 F6 
+Error reading data.
+0D 00 06 01 01 FA 00 05 80 08 01 9C 
+Error reading data.
+0D 00 03 01 00 FA 00 04 80 08 01 97 
+Error reading data.
+0D 00 03 01 00 FA 00 64 80 08 01 F7 
+Error reading data.
+0D 00 03 01 00 FA 00 0E 80 08 01 A1 
+
+Error reading data.
+0D 00 03 01 00 FA 01 D5 80 08 02 69 
+Error reading data.
+0D 00 03 01 00 FA 00 53 80 08 01 E6 
+Error reading data.
+0D 00 06 01 01 FA 00 11 80 08 01 A8 
+
+
