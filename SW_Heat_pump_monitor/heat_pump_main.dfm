@@ -1,4 +1,4 @@
-object Form1: TForm1
+object FormHPmonitor: TFormHPmonitor
   Left = 0
   Top = 0
   BorderStyle = bsSingle
@@ -15,6 +15,7 @@ object Form1: TForm1
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  Visible = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -39,7 +40,7 @@ object Form1: TForm1
     end
     object ddPortList: TComboBox
       Left = 89
-      Top = 8
+      Top = 10
       Width = 200
       Height = 21
       Style = csDropDownList
@@ -47,7 +48,7 @@ object Form1: TForm1
     end
     object btnComOpen: TButton
       Left = 8
-      Top = 39
+      Top = 35
       Width = 75
       Height = 25
       Caption = 'Open'
@@ -56,7 +57,7 @@ object Form1: TForm1
     end
     object btnComClose: TButton
       Left = 8
-      Top = 70
+      Top = 62
       Width = 75
       Height = 25
       Caption = 'Close'
@@ -66,7 +67,7 @@ object Form1: TForm1
     end
     object btnReadData: TButton
       Left = 8
-      Top = 119
+      Top = 89
       Width = 75
       Height = 25
       Caption = 'Read data'
@@ -76,9 +77,9 @@ object Form1: TForm1
     end
     object mm1: TMemo
       Left = 8
-      Top = 544
+      Top = 762
       Width = 377
-      Height = 321
+      Height = 100
       Font.Charset = EASTEUROPE_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -92,7 +93,7 @@ object Form1: TForm1
     end
     object cbReadConstatntly: TCheckBox
       Left = 8
-      Top = 150
+      Top = 122
       Width = 75
       Height = 17
       Caption = 'Constatntly'
@@ -102,10 +103,11 @@ object Form1: TForm1
     end
     object gridData: TStringGrid
       Left = 8
-      Top = 238
+      Top = 199
       Width = 377
-      Height = 300
+      Height = 557
       ColCount = 2
+      DefaultRowHeight = 22
       RowCount = 1
       FixedRows = 0
       Font.Charset = DEFAULT_CHARSET
@@ -116,12 +118,10 @@ object Form1: TForm1
       ParentFont = False
       TabOrder = 7
       OnClick = gridDataClick
-      RowHeights = (
-        24)
     end
     object cbDebug: TCheckBox
       Left = 8
-      Top = 184
+      Top = 145
       Width = 75
       Height = 17
       Caption = 'Debug'
@@ -132,92 +132,92 @@ object Form1: TForm1
       Left = 89
       Top = 39
       Width = 296
-      Height = 193
+      Height = 154
       Caption = ' Settings '
       Color = clScrollBar
       ParentBackground = False
       ParentColor = False
       TabOrder = 9
       object Label1: TLabel
-        Left = 24
-        Top = 46
+        Left = 30
+        Top = 36
         Width = 19
         Height = 13
         Caption = 'Day'
       end
       object Label2: TLabel
-        Left = 24
-        Top = 80
+        Left = 30
+        Top = 63
         Width = 25
         Height = 13
         Caption = 'Night'
       end
       object Label3: TLabel
-        Left = 64
-        Top = 24
+        Left = 70
+        Top = 14
         Width = 27
         Height = 13
         Caption = 'Circ 1'
       end
       object Label4: TLabel
-        Left = 137
-        Top = 24
+        Left = 143
+        Top = 14
         Width = 27
         Height = 13
         Caption = 'Circ 2'
       end
       object lblWater: TLabel
-        Left = 208
-        Top = 24
+        Left = 214
+        Top = 14
         Width = 30
         Height = 13
         Caption = 'Water'
       end
       object edC1Day: TEdit
-        Left = 64
-        Top = 43
+        Left = 70
+        Top = 33
         Width = 57
         Height = 21
         TabOrder = 0
       end
       object edC2Day: TEdit
-        Left = 137
-        Top = 43
+        Left = 143
+        Top = 33
         Width = 57
         Height = 21
         TabOrder = 1
       end
       object edC1night: TEdit
-        Left = 64
-        Top = 77
+        Left = 70
+        Top = 60
         Width = 57
         Height = 21
         TabOrder = 2
       end
       object edC2Night: TEdit
-        Left = 137
-        Top = 77
+        Left = 143
+        Top = 60
         Width = 57
         Height = 21
         TabOrder = 3
       end
       object edWaterDay: TEdit
-        Left = 208
-        Top = 43
+        Left = 214
+        Top = 33
         Width = 57
         Height = 21
         TabOrder = 4
       end
       object edWaterNight: TEdit
-        Left = 208
-        Top = 77
+        Left = 214
+        Top = 60
         Width = 57
         Height = 21
         TabOrder = 5
       end
       object ddHPMode: TComboBox
-        Left = 64
-        Top = 111
+        Left = 70
+        Top = 87
         Width = 201
         Height = 21
         Style = csDropDownList
@@ -231,8 +231,8 @@ object Form1: TForm1
           'Emergency (electric only)')
       end
       object btnSettingsRead: TButton
-        Left = 64
-        Top = 152
+        Left = 70
+        Top = 114
         Width = 75
         Height = 25
         Caption = 'Read'
@@ -241,8 +241,8 @@ object Form1: TForm1
         OnClick = btnSettingsReadClick
       end
       object btnSettingsWrite: TButton
-        Left = 190
-        Top = 152
+        Left = 196
+        Top = 114
         Width = 75
         Height = 25
         Caption = 'Write'
@@ -251,22 +251,33 @@ object Form1: TForm1
         OnClick = btnSettingsWriteClick
       end
     end
-    object cbDbgAddr: TCheckBox
-      Left = 8
-      Top = 207
-      Width = 80
-      Height = 17
-      Caption = 'Dbg Address'
-      TabOrder = 10
-    end
     object btnLoadCharts: TButton
       Left = 312
       Top = 8
       Width = 73
       Height = 25
       Caption = 'Load charts'
-      TabOrder = 11
+      TabOrder = 10
       OnClick = btnLoadChartsClick
+    end
+    object btnTest: TButton
+      Left = 8
+      Top = 168
+      Width = 33
+      Height = 25
+      Caption = 'Test'
+      Enabled = False
+      TabOrder = 11
+      OnClick = btnTestClick
+    end
+    object btnShowEnergy: TButton
+      Left = 47
+      Top = 168
+      Width = 36
+      Height = 25
+      Caption = 'Energy'
+      TabOrder = 12
+      OnClick = btnShowEnergyClick
     end
   end
   object chart1: TChart
@@ -354,6 +365,7 @@ object Form1: TForm1
     OnZoom = ChartZoom
     BottomAxis.Grid.Color = 14540253
     LeftAxis.Grid.Color = 14540253
+    RightAxis.Grid.Visible = False
     View3D = False
     Zoom.Pen.Color = 8388863
     Color = clWhite
@@ -421,8 +433,20 @@ object Form1: TForm1
       YValues.Name = 'Y'
       YValues.Order = loNone
     end
-    object Series12: TLineSeries
+    object Series15: TLineSeries
       SeriesColor = clAqua
+      VertAxis = aRightAxis
+      Brush.BackColor = clDefault
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
+    object Series16: TLineSeries
+      SeriesColor = 16744448
+      VertAxis = aRightAxis
       Brush.BackColor = clDefault
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
@@ -475,17 +499,6 @@ object Form1: TForm1
       YValues.Order = loNone
     end
     object LineSeries10: TLineSeries
-      Brush.BackColor = clDefault
-      LinePen.Width = 2
-      Pointer.InflateMargins = True
-      Pointer.Style = psRectangle
-      XValues.DateTime = True
-      XValues.Name = 'X'
-      XValues.Order = loAscending
-      YValues.Name = 'Y'
-      YValues.Order = loNone
-    end
-    object LineSeries11: TLineSeries
       Brush.BackColor = clDefault
       LinePen.Width = 2
       Pointer.InflateMargins = True
@@ -552,6 +565,39 @@ object Form1: TForm1
     end
     object Series10: TLineSeries
       SeriesColor = clSilver
+      VertAxis = aRightAxis
+      Brush.BackColor = clDefault
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
+    object Series11: TLineSeries
+      SeriesColor = clRed
+      VertAxis = aRightAxis
+      Brush.BackColor = clDefault
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
+    object Series13: TLineSeries
+      SeriesColor = clYellow
+      VertAxis = aRightAxis
+      Brush.BackColor = clDefault
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
+    object Series14: TLineSeries
+      SeriesColor = 8454016
       VertAxis = aRightAxis
       Brush.BackColor = clDefault
       Pointer.InflateMargins = True

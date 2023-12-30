@@ -107,11 +107,21 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="heat_pump_main.pas">
-            <Form>Form1</Form>
+            <Form>FormHPmonitor</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Serial_comm.pas"/>
         <DCCReference Include="Orodja.pas"/>
+        <DCCReference Include="window_test.pas">
+            <Form>FormTest</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="heat_pump_comm.pas"/>
+        <DCCReference Include="heat_pump_constants.pas"/>
+        <DCCReference Include="window_energy.pas">
+            <Form>FormEnergy</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -139,6 +149,12 @@
             </Delphi.Personality>
             <Deployment Version="3">
                 <DeployFile LocalName="heat_pump.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>heat_pump.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="heat_pump.exe" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>heat_pump.exe</RemoteName>
                         <Overwrite>true</Overwrite>

@@ -18,7 +18,7 @@ uses
   Windows, Messages, SysUtils, Classes, Forms, Dialogs, Registry;
 
 const
-  ComReadTimeout = 700; // ms
+  ComReadTimeout = 1100; // ms
   STX = #02;
   ETX = #03;
   CR  = #13;
@@ -76,8 +76,8 @@ var
   procedure ComPortClose (var Naprava : TSerijskaNaprava); Overload;
   procedure ComPortClose (var H : THandle);                Overload;
 
-  function ComPortCTSsignal (var H : THandle; NewValue : boolean) : boolean; Overload;
-  function ComPortCTSsignal (var Naprava : TSerijskaNaprava; NewValue : boolean) : boolean; Overload;
+  function ComPortSetRTSsignal (var H : THandle; NewValue : boolean) : boolean; Overload;
+  function ComPortSetRTSsignal (var Naprava : TSerijskaNaprava; NewValue : boolean) : boolean; Overload;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -374,7 +374,7 @@ end;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
-function ComPortCTSsignal (var H : THandle; NewValue : boolean) : boolean;
+function ComPortSetRTSsignal (var H : THandle; NewValue : boolean) : boolean;
 begin
   result := false;
   if H <> INVALID_HANDLE_VALUE then
@@ -385,9 +385,9 @@ begin
     end;
 end;
 
-function ComPortCTSsignal (var Naprava : TSerijskaNaprava; NewValue : boolean) : boolean;
+function ComPortSetRTSsignal (var Naprava : TSerijskaNaprava; NewValue : boolean) : boolean;
 begin
-  result := ComPortCTSsignal(Naprava.Handle, NewValue);
+  result := ComPortSetRTSsignal(Naprava.Handle, NewValue);
 end;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
