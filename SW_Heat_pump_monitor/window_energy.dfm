@@ -5,7 +5,7 @@ object FormEnergy: TFormEnergy
   BorderStyle = bsSingle
   Caption = 'Energy'
   ClientHeight = 187
-  ClientWidth = 503
+  ClientWidth = 589
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -29,10 +29,10 @@ object FormEnergy: TFormEnergy
   object GridEnergy: TStringGrid
     Left = 8
     Top = 39
-    Width = 489
+    Width = 573
     Height = 138
     ColCount = 4
-    DefaultColWidth = 120
+    DefaultColWidth = 140
     DefaultRowHeight = 25
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

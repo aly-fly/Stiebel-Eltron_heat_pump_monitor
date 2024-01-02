@@ -16,7 +16,8 @@ type
   private
     { Private declarations }
   public
-    { Public declarations }
+    BeforeReading: procedure;
+    AfterReading: procedure;
   end;
 
 var
@@ -27,12 +28,17 @@ implementation
 
 {$R *.dfm}
 
+procedure dummy();
+begin
+end;
+
 procedure TFormEnergy.btnReadEnergyDataClick(Sender: TObject);
 var
   col, row : Integer;
   i : Integer;
   
 begin
+  BeforeReading();
 (*
 A	0	'091A'	 EL_AFNAHMELEISTUNG_WW_TAG_WH	976
 A	0	'091B'	 EL_AFNAHMELEISTUNG_WW_TAG_KWH	0
@@ -79,10 +85,16 @@ A	0	'0931'	 WAERMEERTRAG_HEIZ_SUM_MWH	259
       if HPCommRead(Data, 1, False) then
         GridEnergy.Cells[col, row] := floattostrf(data[0].Value + data[1].Value, fffixed, 5, 3);  
     end;
+
+  AfterReading();    
 end;
 
 procedure TFormEnergy.FormCreate(Sender: TObject);
 begin
+  // functions are not defined yet. Main wrapper may divert those pointers to some actual procedures.
+  BeforeReading := dummy;
+  AfterReading := dummy;
+
   GridEnergy.Cells[1, 0] := 'Electric grid';
   GridEnergy.Cells[2, 0] := 'Heater';
   GridEnergy.Cells[3, 0] := 'Produced output';

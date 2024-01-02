@@ -254,7 +254,7 @@ begin
     then Wdata := Dataset[Didx].Data
     else Wdata := u16(s16(Round(Dataset[Didx].Value / Dataset[Didx].Scaling)));
 
-  // do not HPCommunicate if data has not changed
+  // do not communicate if data has not changed
   if Wdata = Dataset[Didx].DataLastRead then 
     begin
     Result := True;

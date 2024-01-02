@@ -173,6 +173,33 @@ object FormHPmonitor: TFormHPmonitor
         Height = 13
         Caption = 'Water'
       end
+      object Label5: TLabel
+        Left = 11
+        Top = 101
+        Width = 38
+        Height = 13
+        Alignment = taCenter
+        AutoSize = False
+        Caption = 'Party'
+      end
+      object lblCurrTime: TLabel
+        Left = 136
+        Top = 110
+        Width = 69
+        Height = 40
+        Hint = 'Current time at time of reading settings'
+        Alignment = taCenter
+        AutoSize = False
+        Caption = 'Time'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+      end
       object edC1Day: TEdit
         Left = 70
         Top = 33
@@ -233,7 +260,7 @@ object FormHPmonitor: TFormHPmonitor
       object btnSettingsRead: TButton
         Left = 70
         Top = 114
-        Width = 75
+        Width = 67
         Height = 25
         Caption = 'Read'
         Enabled = False
@@ -241,14 +268,24 @@ object FormHPmonitor: TFormHPmonitor
         OnClick = btnSettingsReadClick
       end
       object btnSettingsWrite: TButton
-        Left = 196
+        Left = 204
         Top = 114
-        Width = 75
+        Width = 67
         Height = 25
         Caption = 'Write'
         Enabled = False
         TabOrder = 8
         OnClick = btnSettingsWriteClick
+      end
+      object edPartyHrs: TEdit
+        Left = 11
+        Top = 116
+        Width = 38
+        Height = 21
+        Hint = 'Number of hours tos stay in Day mode (schedule override)'
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 9
       end
     end
     object btnLoadCharts: TButton
@@ -263,17 +300,16 @@ object FormHPmonitor: TFormHPmonitor
     object btnTest: TButton
       Left = 8
       Top = 168
-      Width = 33
+      Width = 31
       Height = 25
       Caption = 'Test'
-      Enabled = False
       TabOrder = 11
       OnClick = btnTestClick
     end
     object btnShowEnergy: TButton
-      Left = 47
+      Left = 41
       Top = 168
-      Width = 36
+      Width = 42
       Height = 25
       Caption = 'Energy'
       TabOrder = 12
@@ -563,17 +599,6 @@ object FormHPmonitor: TFormHPmonitor
       YValues.Name = 'Y'
       YValues.Order = loNone
     end
-    object Series10: TLineSeries
-      SeriesColor = clSilver
-      VertAxis = aRightAxis
-      Brush.BackColor = clDefault
-      Pointer.InflateMargins = True
-      Pointer.Style = psRectangle
-      XValues.Name = 'X'
-      XValues.Order = loAscending
-      YValues.Name = 'Y'
-      YValues.Order = loNone
-    end
     object Series11: TLineSeries
       SeriesColor = clRed
       VertAxis = aRightAxis
@@ -608,10 +633,10 @@ object FormHPmonitor: TFormHPmonitor
       YValues.Order = loNone
     end
   end
-  object tmr1: TTimer
+  object timerAutoRead: TTimer
     Enabled = False
     Interval = 5000
-    OnTimer = tmr1Timer
+    OnTimer = timerAutoReadTimer
     Left = 64
     Top = 304
   end

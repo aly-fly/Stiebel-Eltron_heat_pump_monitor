@@ -23,7 +23,7 @@ type
     btnComClose: TButton;
     btnReadData: TButton;
     mm1: TMemo;
-    tmr1: TTimer;
+    timerAutoRead: TTimer;
     cbReadConstatntly: TCheckBox;
     Chart2: TChart;
     LineSeries1: TLineSeries;
@@ -40,7 +40,6 @@ type
     Series7: TLineSeries;
     Series8: TLineSeries;
     Series9: TLineSeries;
-    Series10: TLineSeries;
     cbDebug: TCheckBox;
     grpSettings: TGroupBox;
     edC1Day: TEdit;
@@ -66,13 +65,16 @@ type
     Series14: TLineSeries;
     Series15: TLineSeries;
     Series16: TLineSeries;
+    edPartyHrs: TEdit;
+    Label5: TLabel;
+    lblCurrTime: TLabel;
     procedure btnComSearchClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnComOpenClick(Sender: TObject);
     procedure btnComCloseClick(Sender: TObject);
     procedure btnReadDataClick(Sender: TObject);
     procedure cbReadConstatntlyClick(Sender: TObject);
-    procedure tmr1Timer(Sender: TObject);
+    procedure timerAutoReadTimer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
@@ -94,7 +96,7 @@ type
     function  HPCommReadLog(var Dataset : TAHPdata; Didx : Integer; Test : Boolean) : Boolean;
     function  HPCommWriteLog(var Dataset : TAHPdata; Didx : Integer) : Boolean;    
   public
-    { Public declarations }
+    // ...
   end;
 
       
@@ -102,6 +104,9 @@ var
   FormHPmonitor: TFormHPmonitor;
   HPdata : TAHPdata;
   HPsettings : TAHPdata;
+
+procedure StartAutoRead();
+procedure StopAutoRead();
 
 implementation
 
@@ -348,7 +353,7 @@ end;
 
 procedure TFormHPmonitor.cbReadConstatntlyClick(Sender: TObject);
 begin
-  tmr1.Enabled := (cbReadConstatntly.Checked AND NOT btnComOpen.Enabled);
+  StartAutoRead();
 end;
 
 procedure TFormHPmonitor.FormShow(Sender: TObject);
@@ -365,7 +370,7 @@ begin
     mm1.Lines.Add('Next parameter to read: ' + IntToStr(HPparamIdx) + ' ('+HPdata[HPparamIdx].Name+')');
 end;
 
-procedure TFormHPmonitor.tmr1Timer(Sender: TObject);
+procedure TFormHPmonitor.timerAutoReadTimer(Sender: TObject);
 begin
   btnReadDataClick(nil);
 
@@ -480,10 +485,14 @@ end;
 
 procedure TFormHPmonitor.btnSettingsReadClick(Sender: TObject);
 label error;
+var                            //   1    2    3   4   5  
+  DtTm : array [1..5] of word; //  day, mth, yr, hr, min    // day of the week is automatically recalculated by the unit at every minute change
+  i : Integer;
+  
 begin
   Screen.Cursor := crHourGlass;
   btnReadData.Enabled := False;
-  tmr1.Enabled := False;
+  StopAutoRead();
   
   // loopback test
   if not HPCommReadLog(HPsettings, 0, True) then goto error;
@@ -529,7 +538,28 @@ begin
   if not HPCommReadLog(HPsettings, 7, False) then goto error;
   edWaterNight.Text := FloatToStrF(HPsettings[7].Value, ffFixed, 5, 1);
 
-  cbReadConstatntlyClick(nil); // re-enable timer if required
+  if not HPCommReadLog(HPsettings, 8, False) then goto error;
+  edPartyHrs.Text := FloatToStrF(HPsettings[8].Value, ffFixed, 5, 0);
+
+  if not HPCommReadLog(HPsettings, 9, False) then goto error; // current time
+  lblCurrTime.Caption := LeadingZeros(((HPsettings[9].Data      ) AND $FF), 2) + ':' +  // HH
+                         LeadingZeros(((HPsettings[9].Data SHR 8) AND $FF), 2);         // MM 
+
+  // read date and time
+  for i := 1 to 5 do
+    begin
+    if not HPCommReadLog(HPsettings, 9 + i, False) then goto error;
+    DtTm[i] := round(HPsettings[9+i].Value);
+    end;
+  lblCurrTime.Caption := lblCurrTime.Caption + CRLF +  
+    LeadingZeros(DtTm[4], 2) + ':' +  // HH
+    LeadingZeros(DtTm[5], 2) + CRLF + // MM
+      IntToStr(DtTm[3]+2000) + '-' + // YYYY
+    LeadingZeros(DtTm[2], 2) + '-' + // MM
+    LeadingZeros(DtTm[1], 2);        // DD
+  if cbDebug.Checked then mm1.Lines.Add(lblCurrTime.Caption);
+   
+  StartAutoRead(); // re-enable timer if required
   
 error:
   Screen.Cursor := crDefault;
@@ -555,10 +585,15 @@ procedure TFormHPmonitor.btnSettingsWriteClick(Sender: TObject);
         end;
     end;
   
-label error;
+label error; // skip to the end and clean up what needs to be finalized
+var
+  Time : TDateTime;
+  hh, mm, ss, ms,
+  yr, mth, day : word;
+  
 begin
   Screen.Cursor := crHourGlass;
-  tmr1.Enabled := False;
+  StopAutoRead();
   // loopback test
   if not HPCommReadLog(HPsettings, 0, True) then goto error;
 
@@ -581,22 +616,64 @@ begin
   if not WriteStr(edC2Night.Text, 5) then goto error;
   if not WriteStr(edWaterDay.Text, 6) then goto error;
   if not WriteStr(edWaterNight.Text, 7) then goto error;
-  
+  if not WriteStr(edPartyHrs.Text, 8) then goto error;
+
+  // current time
+  Time := GetTime();
+  DecodeTime(Time, hh, mm, ss, ms);
+  // MSB = minutes, LSB = hours: 060B = "11:06"
+  HPsettings[9].Data := ((mm SHL 8) AND $FF00) OR (hh AND $00FF); 
+  HPsettings[9].Value := -999999; // use Data variable to write value
+  mm1.Lines.Add('Writing current time: 0x' + IntToHex(HPsettings[9].Data, 4));
+  if not HPCommWriteLog(HPsettings, 9) then goto error;
+  // current date and time in different registers
+  Time := now();
+  DecodeDate(Time, yr, mth, day);
+
+  HPsettings[10].Value := day;
+  if not HPCommWriteLog(HPsettings, 11) then goto error;
+  HPsettings[11].Value := mth;
+  if not HPCommWriteLog(HPsettings, 12) then goto error;
+  HPsettings[12].Value := yr-2000;
+  if not HPCommWriteLog(HPsettings, 13) then goto error;
+  HPsettings[13].Value := hh;
+  if not HPCommWriteLog(HPsettings, 14) then goto error;
+  HPsettings[14].Value := mm;
+  if not HPCommWriteLog(HPsettings, 15) then goto error;
+  // day of the week (register $0121) is automatically recalculated by the unit itself at every minute change
+
 error:
   Screen.Cursor := crDefault;
   btnReadData.Enabled := True;
-  cbReadConstatntlyClick(nil); // re-enable timer if required  
+  StartAutoRead(); // re-enable timer if required  
 end;
 
 procedure TFormHPmonitor.btnTestClick(Sender: TObject);
 begin
-  cbReadConstatntly.Checked := False;
+  // assign real functions
+  FormTest.BeforeReading := StopAutoRead;
+  FormTest.AfterReading := StartAutoRead;    
+
   FormTest.Show;
 end;
 
 procedure TFormHPmonitor.btnShowEnergyClick(Sender: TObject);
 begin
+  // assign real functions
+  FormEnergy.BeforeReading := StopAutoRead;
+  FormEnergy.AfterReading := StartAutoRead;    
+
   FormEnergy.Show;
+end;
+
+procedure StartAutoRead();
+begin
+  FormHPmonitor.timerAutoRead.Enabled := (FormHPmonitor.cbReadConstatntly.Checked AND NOT FormHPmonitor.btnComOpen.Enabled);
+end;
+
+procedure StopAutoRead();
+begin
+  FormHPmonitor.timerAutoRead.Enabled := False;
 end;
 
 
@@ -606,7 +683,7 @@ var
   
 begin
   SenderChart := nil;
-  SetLength(HPdata, 17+7);
+  SetLength(HPdata, 16+7);
   i := 0;
 
 // 0d 00 03 01 00 fa 00 0c 80 08 01 9f 	 03 00 0d 02 00 fa 00 0c 00 40 01 58 	'0d	'03	'01 read	'00fa	'000c zunanja temp
@@ -780,16 +857,6 @@ begin
   HPdata[i].Series  :=  Series9;
   inc(i);
 
-  HPdata[i].Name    := 'fdbf RELEASE_2WE';
-  HPdata[i].Request := #$0d#$00#$03#$01#$00#$fa#$fd#$bf#$01#$00#$02#$c8;
-  HPdata[i].Device  := DEV_BOILER;
-  HPdata[i].Circuit := CIRC_GEN;
-  HPdata[i].RegAddr := $fdbf;
-  HPdata[i].Scaling := 1/256 * 1.25;
-  HPdata[i].Units   := '';
-  HPdata[i].Series  :=  Series10;
-  inc(i);
-
 //--------------------------------------------------------------------------------------------------------------------
 
   HPdata[i].Name    := 'Fan speed';
@@ -809,7 +876,7 @@ begin
   HPdata[i].Units   := '';
   HPdata[i].Series  := series14;
   inc(i);
- 
+(* 
   HPdata[i].Name    := 'Compressor target';
   HPdata[i].Device  := DEV_HEATING;
   HPdata[i].Circuit := CIRC_GEN;
@@ -818,7 +885,7 @@ begin
   HPdata[i].Units   := '';
   HPdata[i].Series  := nil;
   inc(i);
- 
+*) 
   HPdata[i].Name    := 'High pressure';
   HPdata[i].Device  := DEV_HEATING;
   HPdata[i].Circuit := CIRC_GEN;
@@ -836,7 +903,16 @@ begin
   HPdata[i].Units   := ' bar';
   HPdata[i].Series  := series16;
   inc(i);
- 
+
+  HPdata[i].Name    := 'Hot gas temperature';
+  HPdata[i].Device  := DEV_HEATING;
+  HPdata[i].Circuit := CIRC_GEN;
+  HPdata[i].RegAddr := $0265;
+  HPdata[i].Scaling := 0.1;
+  HPdata[i].Units   := ' °C';
+  HPdata[i].Series  := nil;
+  inc(i);
+
   HPdata[i].Name    := 'Defrost active';
   HPdata[i].Device  := DEV_HEATING;
   HPdata[i].Circuit := CIRC_GEN;
@@ -880,7 +956,7 @@ begin
   csm := Copy(S, 21, 4);
 *)  
 
-  SetLength(HPsettings, 8);
+  SetLength(HPsettings, 16);
   i := 0;
 
   // 0d 00 0d 01 00 0b 00 00 00 00 00 26 	 55 55 55 55 55 55 55 55 55 55 03 52  '0d PC	'0d PC	'01 Read	'000b	'0000	'0000	'0026
@@ -978,6 +1054,97 @@ begin
   HPsettings[i].Scaling := 0.1;
   HPsettings[i].Units   := ' °C';
   HPsettings[i].Series  :=  nil;
+  inc(i);
+
+  HPsettings[i].Name    := 'Party hours';
+  HPsettings[i].Request := '';
+  HPsettings[i].Device  := DEV_BOILER;
+  HPsettings[i].Circuit := CIRC_GEN;
+  HPsettings[i].RegAddr := $fdbf;
+  HPsettings[i].Scaling := 1/256;  // 3328 = 13 hours
+  HPsettings[i].Units   := '';
+  HPsettings[i].Series  := nil;
+  inc(i);
+  // 9
+  HPsettings[i].Name    := 'Current time';
+  HPsettings[i].Request := '';
+  HPsettings[i].Device  := DEV_BOILER;
+  HPsettings[i].Circuit := CIRC_GEN;
+  HPsettings[i].RegAddr := $0009;
+  HPsettings[i].Scaling := 1; // MSB = minutes, LSB = hours: 060B = "11:06"
+  HPsettings[i].Units   := '';
+  HPsettings[i].Series  := nil;
+  inc(i);
+(*
+  { "WOCHENTAG"                                        , 0x0121, et_little_endian},
+  { "TAG"                                              , 0x0122, et_little_endian},
+  { "MONAT"                                            , 0x0123, et_little_endian},
+  { "JAHR"                                             , 0x0124, et_little_endian}, // +2000
+  { "STUNDE"                                           , 0x0125, et_little_endian},
+  { "MINUTE"                                           , 0x0126, et_little_endian},
+  { "SEKUNDE"                                          , 0x0127, et_little_endian},
+*)  
+  // 10
+  HPsettings[i].Name    := 'DAY';
+  HPsettings[i].Request := '';
+  HPsettings[i].Device  := DEV_BOILER;
+  HPsettings[i].Circuit := CIRC_GEN;
+  HPsettings[i].RegAddr := $0122;
+  HPsettings[i].Scaling := 1/256; // MSB = real value
+  HPsettings[i].Units   := '';
+  HPsettings[i].Series  := nil;
+  inc(i);
+
+  HPsettings[i].Name    := 'MONTH';
+  HPsettings[i].Request := '';
+  HPsettings[i].Device  := DEV_BOILER;
+  HPsettings[i].Circuit := CIRC_GEN;
+  HPsettings[i].RegAddr := $0123;
+  HPsettings[i].Scaling := 1/256; // MSB = real value
+  HPsettings[i].Units   := '';
+  HPsettings[i].Series  := nil;
+  inc(i);
+
+  HPsettings[i].Name    := 'YEAR';
+  HPsettings[i].Request := '';
+  HPsettings[i].Device  := DEV_BOILER;
+  HPsettings[i].Circuit := CIRC_GEN;
+  HPsettings[i].RegAddr := $0124;
+  HPsettings[i].Scaling := 1/256; // MSB = real value
+  HPsettings[i].Units   := '';
+  HPsettings[i].Series  := nil;
+  inc(i);
+
+  HPsettings[i].Name    := 'HOUR';
+  HPsettings[i].Request := '';
+  HPsettings[i].Device  := DEV_BOILER;
+  HPsettings[i].Circuit := CIRC_GEN;
+  HPsettings[i].RegAddr := $0125;
+  HPsettings[i].Scaling := 1/256; // MSB = real value
+  HPsettings[i].Units   := '';
+  HPsettings[i].Series  := nil;
+  inc(i);
+  // 14
+  HPsettings[i].Name    := 'MINUTES';
+  HPsettings[i].Request := '';
+  HPsettings[i].Device  := DEV_BOILER;
+  HPsettings[i].Circuit := CIRC_GEN;
+  HPsettings[i].RegAddr := $0126;
+  HPsettings[i].Scaling := 1/256; // MSB = real value
+  HPsettings[i].Units   := '';
+  HPsettings[i].Series  := nil;
+  inc(i);
+
+  // currently not used
+  // 15
+  HPsettings[i].Name    := 'Manual defrost';
+  HPsettings[i].Request := '';
+  HPsettings[i].Device  := DEV_BOILER;
+  HPsettings[i].Circuit := CIRC_GEN;
+  HPsettings[i].RegAddr := $fdc0;
+  HPsettings[i].Scaling := 1/256;
+  HPsettings[i].Units   := '';
+  HPsettings[i].Series  := nil;
   inc(i);
   
 end;

@@ -20,7 +20,6 @@ type
     btnScanAllDevReg: TButton;
     pb2: TProgressBar;
     lblRegScanStatus: TLabel;
-    edDev: TEdit;
     edCirc: TEdit;
     edReg: TEdit;
     btnReadMan: TButton;
@@ -30,6 +29,8 @@ type
     edVal: TEdit;
     edNumRegs: TEdit;
     Label1: TLabel;
+    btnStop: TButton;
+    cbbDev: TComboBox;
     procedure btnScanDevicesClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure cbDebugClick(Sender: TObject);
@@ -39,22 +40,29 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure btnScanAllDevRegClick(Sender: TObject);
     procedure btnReadManClick(Sender: TObject);
+    procedure btnStopClick(Sender: TObject);
   private
-    function  HPCommReadLog(var Dataset : TAHPdata; Didx : Integer; Test : Boolean) : Boolean;
+    function  HPCommReadLogT(var Dataset : TAHPdata; Didx : Integer; Test : Boolean) : Boolean;
     procedure SaveToFile(Name : string);
   public
     Stop : boolean;
+    BeforeReading: procedure;
+    AfterReading: procedure;
   end;
 
 var
   FormTest: TFormTest;
   DatasetTest : TAHPdata;
-
+  
 implementation
 
 {$R *.dfm}
 
-function  TFormTest.HPCommReadLog(var Dataset : TAHPdata; Didx : Integer; Test : Boolean) : Boolean;
+procedure dummy();
+begin
+end;
+
+function  TFormTest.HPCommReadLogT(var Dataset : TAHPdata; Didx : Integer; Test : Boolean) : Boolean;
 begin
   HPLastMessage := '';
   Result := HPCommRead(Dataset, Didx, Test);
@@ -66,30 +74,35 @@ var
   Data : TAHPdata;
   i, n : Integer;
 begin
+  BeforeReading();
+  Stop := False;
   SetLength(Data, 1);
-  Data[0].Device  := StrToInt(edDev.Text);
+  Data[0].Device  := StrToInt(cbbDev.Text);
   Data[0].Circuit := StrToInt(edCirc.Text);
   Data[0].RegAddr := StrToInt(edReg.Text);
   n := StrToInt(edNumRegs.Text);
   for i := 0 to n-1 do 
     begin
     Data[0].RegAddr := StrToInt(edReg.Text) + i;
-    if HPCommReadLog (Data, 0, False) 
+    if HPCommReadLogT (Data, 0, False) 
       then edVal.Text := IntToHex(Data[0].Data, 4) + '  ' + IntToStr(s16(Data[0].Data))
       else edVal.Text := '';
-    mm1.Lines.Add(edDev.Text + ' ' + edCirc.Text + ' ' + IntToHex(Data[0].RegAddr, 4) + ' ' + edVal.Text);  
-    if Application.Terminated or Stop then exit; 
+    mm1.Lines.Add(cbbDev.Text + ' ' + edCirc.Text + ' ' + IntToHex(Data[0].RegAddr, 4) + ' ' + edVal.Text);  
+    if Application.Terminated or Stop then break; 
     wait (200);
     end;
   
   mm1.Lines.Add('-----');  
   SetLength(Data, 0);
+  AfterReading();
 end;
 
 procedure TFormTest.btnScanAllDevRegClick(Sender: TObject);
 var
   dev, num : Integer;
 begin
+  BeforeReading();
+  Stop := False;
   btnScanAllDevReg.Enabled := False;
   num := rgDevices.Items.Count;
   pb2.Max := num;
@@ -101,6 +114,7 @@ begin
     if Application.Terminated or Stop then exit; 
     end;
   btnScanAllDevReg.Enabled := True;
+  AfterReading();
 end;
 
 procedure TFormTest.btnScanDevicesClick(Sender: TObject);
@@ -108,6 +122,8 @@ var
  dd, cc : Integer;
  sR, L : string;
 begin
+  BeforeReading();
+  Stop := False;
   mm1.Clear;
   rgDevices.Items.Clear;
 
@@ -117,7 +133,7 @@ begin
     for cc := 0 to $F do
       begin
       DatasetTest[dd].Circuit := cc;
-      if HPCommReadLog (DatasetTest, dd, True) then sR := 'X' else sR := '.';
+      if HPCommReadLogT (DatasetTest, dd, True) then sR := 'X' else sR := '.';
       L := DatasetTest[dd].Name + ' ' + IntToHex(cc, 1) + ' ' + sR;
       mm1.Lines.Add(L);
       DevGrid.Cells[cc+1, dd+1] := sR;
@@ -132,6 +148,7 @@ begin
     end;
   btnScanRegisters.Enabled := True;
   btnScanAllDevReg.Enabled := True;  
+  AfterReading();
 end;
 
 procedure TFormTest.btnScanRegistersClick(Sender: TObject);
@@ -140,6 +157,8 @@ var
   txt, t1, t2, srch, cmpr, name : string;
   
 begin
+  BeforeReading();
+  Stop := False;
   if rgDevices.ItemIndex < 0 then exit;
   btnScanRegisters.Enabled := False;
   mm1.Clear;
@@ -178,7 +197,7 @@ begin
                     IntToHex(DatasetTest[Didx].Circuit, 1) + '  ' +
                     IntToHex(DatasetTest[Didx].RegAddr, 4) + '  ';
     
-    if HPCommReadLog (DatasetTest, Didx, False) then 
+    if HPCommReadLogT (DatasetTest, Didx, False) then 
       begin
       lblRegScanStatus.Caption := lblRegScanStatus.Caption + IntToStr(s16(DatasetTest[Didx].Data)) + HPLastMessage;
       
@@ -196,6 +215,13 @@ begin
     end;
   SaveToFile(DatasetTest[Didx].Name);    
   btnScanRegisters.Enabled := True;
+  AfterReading();
+end;
+
+procedure TFormTest.btnStopClick(Sender: TObject);
+begin
+  Stop := True;
+  AfterReading();
 end;
 
 procedure TFormTest.cbDebugClick(Sender: TObject);
@@ -212,6 +238,10 @@ procedure TFormTest.FormCreate(Sender: TObject);
 var
   i, r, c : Integer;
 begin
+  // functions are not defined yet. Main wrapper may divert those pointers to some actual procedures.
+  BeforeReading := dummy;
+  AfterReading := dummy;
+
   Stop := False;
   SetLength(DatasetTest, 9);
   for i := 0 to Length(DatasetTest)-1 do

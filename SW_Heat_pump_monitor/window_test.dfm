@@ -152,20 +152,12 @@ object FormTest: TFormTest
     Height = 17
     TabOrder = 9
   end
-  object edDev: TEdit
-    Left = 8
-    Top = 368
-    Width = 49
-    Height = 21
-    TabOrder = 10
-    Text = '10'
-  end
   object edCirc: TEdit
     Left = 63
     Top = 368
     Width = 49
     Height = 21
-    TabOrder = 11
+    TabOrder = 10
     Text = '0'
   end
   object edReg: TEdit
@@ -173,7 +165,7 @@ object FormTest: TFormTest
     Top = 368
     Width = 49
     Height = 21
-    TabOrder = 12
+    TabOrder = 11
     Text = '$60'
   end
   object btnReadMan: TButton
@@ -182,7 +174,7 @@ object FormTest: TFormTest
     Width = 75
     Height = 25
     Caption = 'Read'
-    TabOrder = 13
+    TabOrder = 12
     OnClick = btnReadManClick
   end
   object edVal: TEdit
@@ -190,14 +182,38 @@ object FormTest: TFormTest
     Top = 368
     Width = 147
     Height = 21
-    TabOrder = 14
+    TabOrder = 13
   end
   object edNumRegs: TEdit
     Left = 173
     Top = 368
     Width = 49
     Height = 21
-    TabOrder = 15
+    TabOrder = 14
     Text = '8'
+  end
+  object btnStop: TButton
+    Left = 588
+    Top = 366
+    Width = 59
+    Height = 25
+    Caption = 'Stop'
+    TabOrder = 15
+    OnClick = btnStopClick
+  end
+  object cbbDev: TComboBox
+    Left = 8
+    Top = 368
+    Width = 49
+    Height = 21
+    ItemIndex = 0
+    TabOrder = 16
+    Text = '03'
+    Items.Strings = (
+      '03'
+      '06'
+      '09'
+      '$0A'
+      '$0C')
   end
 end
