@@ -4,7 +4,7 @@ object FormTest: TFormTest
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Test'
-  ClientHeight = 527
+  ClientHeight = 667
   ClientWidth = 1068
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -29,28 +29,28 @@ object FormTest: TFormTest
   end
   object lbl1: TLabel
     Left = 8
-    Top = 349
+    Top = 301
     Width = 19
     Height = 13
     Caption = 'DEV'
   end
   object lbl2: TLabel
     Left = 63
-    Top = 349
+    Top = 301
     Width = 25
     Height = 13
     Caption = 'CIRC'
   end
   object lbl3: TLabel
     Left = 118
-    Top = 349
+    Top = 301
     Width = 20
     Height = 13
     Caption = 'REG'
   end
   object Label1: TLabel
     Left = 173
-    Top = 349
+    Top = 301
     Width = 8
     Height = 13
     Caption = '#'
@@ -93,10 +93,10 @@ object FormTest: TFormTest
     Left = 8
     Top = 39
     Width = 449
-    Height = 289
+    Height = 258
     ColCount = 17
     DefaultColWidth = 20
-    DefaultRowHeight = 20
+    DefaultRowHeight = 18
     RowCount = 13
     TabOrder = 3
   end
@@ -154,7 +154,7 @@ object FormTest: TFormTest
   end
   object edCirc: TEdit
     Left = 63
-    Top = 368
+    Top = 320
     Width = 49
     Height = 21
     TabOrder = 10
@@ -162,34 +162,27 @@ object FormTest: TFormTest
   end
   object edReg: TEdit
     Left = 118
-    Top = 368
+    Top = 320
     Width = 49
     Height = 21
     TabOrder = 11
-    Text = '$60'
+    Text = '$7f0'
   end
   object btnReadMan: TButton
-    Left = 229
-    Top = 366
-    Width = 75
+    Left = 271
+    Top = 318
+    Width = 58
     Height = 25
     Caption = 'Read'
     TabOrder = 12
     OnClick = btnReadManClick
   end
-  object edVal: TEdit
-    Left = 310
-    Top = 368
-    Width = 147
-    Height = 21
-    TabOrder = 13
-  end
   object edNumRegs: TEdit
     Left = 173
-    Top = 368
-    Width = 49
+    Top = 320
+    Width = 28
     Height = 21
-    TabOrder = 14
+    TabOrder = 13
     Text = '8'
   end
   object btnStop: TButton
@@ -198,22 +191,44 @@ object FormTest: TFormTest
     Width = 59
     Height = 25
     Caption = 'Stop'
-    TabOrder = 15
+    TabOrder = 14
     OnClick = btnStopClick
   end
   object cbbDev: TComboBox
     Left = 8
-    Top = 368
+    Top = 320
     Width = 49
     Height = 21
-    ItemIndex = 0
-    TabOrder = 16
-    Text = '03'
+    ItemIndex = 3
+    TabOrder = 15
+    Text = '$0A'
     Items.Strings = (
       '03'
       '06'
       '09'
       '$0A'
       '$0C')
+  end
+  object GridTestRead: TStringGrid
+    Left = 8
+    Top = 349
+    Width = 321
+    Height = 289
+    DefaultColWidth = 60
+    DefaultRowHeight = 20
+    FixedCols = 0
+    RowCount = 1
+    FixedRows = 0
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goEditing]
+    TabOrder = 16
+  end
+  object btnFill: TButton
+    Left = 207
+    Top = 318
+    Width = 58
+    Height = 25
+    Caption = 'Fill'
+    TabOrder = 17
+    OnClick = btnFillClick
   end
 end

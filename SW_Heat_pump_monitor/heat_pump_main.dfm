@@ -107,12 +107,12 @@ object FormHPmonitor: TFormHPmonitor
       Width = 377
       Height = 557
       ColCount = 2
-      DefaultRowHeight = 22
+      DefaultRowHeight = 19
       RowCount = 1
       FixedRows = 0
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -16
+      Font.Height = -15
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
@@ -357,6 +357,16 @@ object FormHPmonitor: TFormHPmonitor
       YValues.Name = 'Y'
       YValues.Order = loNone
     end
+    object Series12: TLineSeries
+      Brush.BackColor = clDefault
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.DateTime = True
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
     object Series2: TLineSeries
       VertAxis = aRightAxis
       Brush.BackColor = clDefault
@@ -426,7 +436,6 @@ object FormHPmonitor: TFormHPmonitor
     end
     object LineSeries2: TLineSeries
       Brush.BackColor = clDefault
-      LinePen.Width = 2
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       XValues.DateTime = True
@@ -448,7 +457,6 @@ object FormHPmonitor: TFormHPmonitor
     end
     object LineSeries4: TLineSeries
       Brush.BackColor = clDefault
-      LinePen.Width = 2
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       XValues.DateTime = True
@@ -461,6 +469,18 @@ object FormHPmonitor: TFormHPmonitor
       SeriesColor = clFuchsia
       Brush.BackColor = clDefault
       LinePen.Width = 2
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.DateTime = True
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
+    object Series10: TLineSeries
+      SeriesColor = clFuchsia
+      Brush.BackColor = clDefault
+      LinePen.Style = psDash
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       XValues.DateTime = True
@@ -535,22 +555,12 @@ object FormHPmonitor: TFormHPmonitor
       YValues.Order = loNone
     end
     object LineSeries10: TLineSeries
+      SeriesColor = 16685954
       Brush.BackColor = clDefault
-      LinePen.Width = 2
+      LinePen.Style = psDash
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       XValues.DateTime = True
-      XValues.Name = 'X'
-      XValues.Order = loAscending
-      YValues.Name = 'Y'
-      YValues.Order = loNone
-    end
-    object Series5: TLineSeries
-      SeriesColor = 8388863
-      VertAxis = aRightAxis
-      Brush.BackColor = clDefault
-      Pointer.InflateMargins = True
-      Pointer.Style = psRectangle
       XValues.Name = 'X'
       XValues.Order = loAscending
       YValues.Name = 'Y'
@@ -577,28 +587,6 @@ object FormHPmonitor: TFormHPmonitor
       YValues.Name = 'Y'
       YValues.Order = loNone
     end
-    object Series8: TLineSeries
-      SeriesColor = clFuchsia
-      VertAxis = aRightAxis
-      Brush.BackColor = clDefault
-      Pointer.InflateMargins = True
-      Pointer.Style = psRectangle
-      XValues.Name = 'X'
-      XValues.Order = loAscending
-      YValues.Name = 'Y'
-      YValues.Order = loNone
-    end
-    object Series9: TLineSeries
-      SeriesColor = clAqua
-      VertAxis = aRightAxis
-      Brush.BackColor = clDefault
-      Pointer.InflateMargins = True
-      Pointer.Style = psRectangle
-      XValues.Name = 'X'
-      XValues.Order = loAscending
-      YValues.Name = 'Y'
-      YValues.Order = loNone
-    end
     object Series11: TLineSeries
       SeriesColor = clRed
       VertAxis = aRightAxis
@@ -611,7 +599,7 @@ object FormHPmonitor: TFormHPmonitor
       YValues.Order = loNone
     end
     object Series13: TLineSeries
-      SeriesColor = clYellow
+      SeriesColor = 33023
       VertAxis = aRightAxis
       Brush.BackColor = clDefault
       Pointer.InflateMargins = True
@@ -632,10 +620,46 @@ object FormHPmonitor: TFormHPmonitor
       YValues.Name = 'Y'
       YValues.Order = loNone
     end
+    object Series8: TLineSeries
+      SeriesColor = clFuchsia
+      VertAxis = aRightAxis
+      Brush.BackColor = clDefault
+      LinePen.Style = psDot
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
+    object Series9: TLineSeries
+      SeriesColor = clAqua
+      VertAxis = aRightAxis
+      Brush.BackColor = clDefault
+      LinePen.Style = psDot
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
+    object Series5: TLineSeries
+      SeriesColor = 8388863
+      VertAxis = aRightAxis
+      Brush.BackColor = clDefault
+      LinePen.Style = psDot
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
   end
   object timerAutoRead: TTimer
     Enabled = False
-    Interval = 5000
+    Interval = 3000
     OnTimer = timerAutoReadTimer
     Left = 64
     Top = 304

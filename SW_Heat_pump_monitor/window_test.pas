@@ -26,11 +26,12 @@ type
     lbl1: TLabel;
     lbl2: TLabel;
     lbl3: TLabel;
-    edVal: TEdit;
     edNumRegs: TEdit;
     Label1: TLabel;
     btnStop: TButton;
     cbbDev: TComboBox;
+    GridTestRead: TStringGrid;
+    btnFill: TButton;
     procedure btnScanDevicesClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure cbDebugClick(Sender: TObject);
@@ -41,6 +42,7 @@ type
     procedure btnScanAllDevRegClick(Sender: TObject);
     procedure btnReadManClick(Sender: TObject);
     procedure btnStopClick(Sender: TObject);
+    procedure btnFillClick(Sender: TObject);
   private
     function  HPCommReadLogT(var Dataset : TAHPdata; Didx : Integer; Test : Boolean) : Boolean;
     procedure SaveToFile(Name : string);
@@ -69,25 +71,59 @@ begin
   if HPLastMessage <> '' then mm1.Lines.Add(HPLastMessage);
 end;
 
+procedure TFormTest.btnFillClick(Sender: TObject);
+var
+  i, n, r : Integer;
+begin
+  n := StrToIntDef(edNumRegs.Text, 0);
+  GridTestRead.RowCount := n;
+
+  r := StrToIntDef(edReg.Text, 0);  
+  for i := 0 to n-1 do
+    begin
+    GridTestRead.Cells[0, i] := cbbDev.Text;
+    GridTestRead.Cells[1, i] := edCirc.Text;
+    GridTestRead.Cells[2, i] := '$' + IntToHex(r + i, 4);
+    GridTestRead.Cells[3, i] := '';
+    GridTestRead.Cells[4, i] := '';
+    end;
+end;
+
 procedure TFormTest.btnReadManClick(Sender: TObject);
 var
   Data : TAHPdata;
-  i, n : Integer;
+  col, row, n : Integer;
+  s1 : string;
 begin
   BeforeReading();
+  wait(500); // let main program funish any open tasks & comm
   Stop := False;
   SetLength(Data, 1);
-  Data[0].Device  := StrToInt(cbbDev.Text);
-  Data[0].Circuit := StrToInt(edCirc.Text);
-  Data[0].RegAddr := StrToInt(edReg.Text);
-  n := StrToInt(edNumRegs.Text);
-  for i := 0 to n-1 do 
+  n := GridTestRead.RowCount;
+  for row := 0 to n-1 do 
     begin
-    Data[0].RegAddr := StrToInt(edReg.Text) + i;
+    // highlight currently read parameter
+    GridTestRead.Col := 4;
+    GridTestRead.Row := row;
+    
+    Data[0].Device  := StrToInt(GridTestRead.Cells[0, row]);
+    Data[0].Circuit := StrToInt(GridTestRead.Cells[1, row]);
+    Data[0].RegAddr := StrToInt(GridTestRead.Cells[2, row]);
     if HPCommReadLogT (Data, 0, False) 
-      then edVal.Text := IntToHex(Data[0].Data, 4) + '  ' + IntToStr(s16(Data[0].Data))
-      else edVal.Text := '';
-    mm1.Lines.Add(cbbDev.Text + ' ' + edCirc.Text + ' ' + IntToHex(Data[0].RegAddr, 4) + ' ' + edVal.Text);  
+      then
+        begin
+        GridTestRead.Cells[3, row] := IntToHex(Data[0].Data, 4);
+        GridTestRead.Cells[4, row] := IntToStr(s16(Data[0].Data));
+        end
+      else 
+        begin
+        GridTestRead.Cells[3, row] := '.';
+        GridTestRead.Cells[4, row] := '.';
+        end;      
+    s1 := '';
+    for col := 0 to 4 do 
+      s1 := s1 + GridTestRead.Cells[col, row] + ' ';
+    mm1.Lines.Add(s1);
     if Application.Terminated or Stop then break; 
     wait (200);
     end;
@@ -102,6 +138,7 @@ var
   dev, num : Integer;
 begin
   BeforeReading();
+  wait(500); // let main program funish any open tasks & comm
   Stop := False;
   btnScanAllDevReg.Enabled := False;
   num := rgDevices.Items.Count;
@@ -123,6 +160,7 @@ var
  sR, L : string;
 begin
   BeforeReading();
+  wait(500); // let main program funish any open tasks & comm
   Stop := False;
   mm1.Clear;
   rgDevices.Items.Clear;
@@ -158,6 +196,7 @@ var
   
 begin
   BeforeReading();
+  wait(500); // let main program funish any open tasks & comm
   Stop := False;
   if rgDevices.ItemIndex < 0 then exit;
   btnScanRegisters.Enabled := False;

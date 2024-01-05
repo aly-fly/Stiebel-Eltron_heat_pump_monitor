@@ -18,7 +18,7 @@ uses
   Windows, Messages, SysUtils, Classes, Forms, Dialogs, Registry;
 
 const
-  ComReadTimeout = 1100; // ms
+  ComReadTimeout = 800; // ms
   STX = #02;
   ETX = #03;
   CR  = #13;

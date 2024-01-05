@@ -226,7 +226,7 @@ begin
     begin  
     if query <> QRY_RESPONSE then
       begin
-      HPLastMessage := HPLastMessage + 'Incorrect QRY in the response! ';
+      HPLastMessage := HPLastMessage + 'Incorrect QRY in the response! ['+Dataset[Didx].Response+']';
       Exit;
       end;
       

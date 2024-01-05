@@ -2,6 +2,12 @@ unit heat_pump_constants;
 
 interface
 
+Type
+  TerrTypes = record
+    number : word;
+    descr : string;
+  end;
+  
 const
   cAddress : array[1..12] of array[1..2] of string = (
   ('00','direct'),
@@ -79,6 +85,17 @@ const
 		0x0021: "KEINE LEISTUNG"
 	*)
 
+  cErrors : array [1..9] of TerrTypes = (
+  (number: $1FB0; descr: 'INVH AC UBAL'),
+  (number: $1FB4; descr: 'INVH AUST'),
+  (number: $1FCD; descr: 'INVN FATAL ERR'),
+  (number: $1FAF; descr: 'INVH AC UMIN'),
+  (number: $1FBB; descr: 'INVN DC UMIN'),
+  (number: $1FAD; descr: 'INVH DC UMIN'),
+  (number: $1FB6; descr: 'INVH REL OFFEN'),
+  (number: $1FAA; descr: 'INVH INV IMAX'),
+  (number: $1FBE; descr: 'INVN SCR TMAX')
+  );
   
   cRegisters : array[1..3612] of array[1..2] of string = (
 ('0001','ERROR MESSAGE'),

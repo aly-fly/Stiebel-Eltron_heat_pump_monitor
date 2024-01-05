@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Samples.Spin, Orodja, serial_comm,
-  VclTee.TeeGDIPlus, VCLTee.TeEngine, VCLTee.Series, VCLTee.TeeProcs, VCLTee.Chart, Vcl.Grids, window_test, window_energy, heat_pump_comm;
+  VclTee.TeeGDIPlus, VCLTee.TeEngine, VCLTee.Series, VCLTee.TeeProcs, VCLTee.Chart, Vcl.Grids, window_test, window_energy, window_errors, heat_pump_comm;
 
 const
   FN1 : string = '.\Temperatures_';
@@ -68,6 +68,8 @@ type
     edPartyHrs: TEdit;
     Label5: TLabel;
     lblCurrTime: TLabel;
+    Series10: TLineSeries;
+    Series12: TLineSeries;
     procedure btnComSearchClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnComOpenClick(Sender: TObject);
@@ -664,6 +666,12 @@ begin
   FormEnergy.AfterReading := StartAutoRead;    
 
   FormEnergy.Show;
+
+  // assign real functions
+  FormErrors.BeforeReading := StopAutoRead;
+  FormErrors.AfterReading := StartAutoRead;    
+
+  FormErrors.Show;
 end;
 
 procedure StartAutoRead();
@@ -683,7 +691,7 @@ var
   
 begin
   SenderChart := nil;
-  SetLength(HPdata, 16+7);
+  SetLength(HPdata, 16+7+4);
   i := 0;
 
 // 0d 00 03 01 00 fa 00 0c 80 08 01 9f 	 03 00 0d 02 00 fa 00 0c 00 40 01 58 	'0d	'03	'01 read	'00fa	'000c zunanja temp
@@ -695,6 +703,16 @@ begin
   HPdata[i].Scaling := 0.1;
   HPdata[i].Units   := ' °C';
   HPdata[i].Series  := Series1;
+  inc(i);
+  
+  HPdata[i].Name    := 'Outdoor HP';
+  HPdata[i].Request := '';
+  HPdata[i].Device  := DEV_HEATING;
+  HPdata[i].Circuit := CIRC_GEN;
+  HPdata[i].RegAddr := $000c;
+  HPdata[i].Scaling := 0.1;
+  HPdata[i].Units   := ' °C';
+  HPdata[i].Series  := Series12;
   inc(i);
   
     // 0d 00 06 01 01 fa 00 11 00 d0 01 f0 	 06 01 0d 02 00 fa 00 11 00 d0 01 f1 	'0d	'06	'01 read	'01fa	'0011 ROOM TEMP	'00d0	'01f0		'06	'0d	'02	'00fa	'0011 ROOM TEMP	'00d0	'01f1	00d0	208	208	20,8
@@ -763,7 +781,7 @@ begin
   inc(i);
 
     // 0d 00 03 01 00 fa 00 0f 80 08 01 a2 	 03 00 0d 02 00 fa 00 0f 01 5d 01 79 	'0d	'03	'01 read	'00fa	'000f FLOW TEMP	'8008	'01a2		'03	'0d	'02	'00fa	'000f FLOW TEMP	'015d	'0179	015d	349	349	34,9
-  HPdata[i].Name    := 'Heating 2 (mixer)';
+  HPdata[i].Name    := 'Heating 2';
   HPdata[i].Request := #$0d#$00#$03#$01#$00#$fa#$00#$0f#$80#$08#$01#$a2;
   HPdata[i].Device  := DEV_BOILER;
   HPdata[i].Circuit := CIRC_GEN;
@@ -784,17 +802,6 @@ begin
   HPdata[i].Series  :=  LineSeries4;
   inc(i);
   
-    // 0d 00 03 01 00 fa 01 d6 80 08 02 6a 	 03 00 0d 02 00 fa 01 d6 01 bd 02 a1 	'0d	'03	'01 read	'00fa	'01d6 WP PRELIMINARY LIST	'8008	'026a		'03	'0d	'02	'00fa	'01d6 WP PRELIMINARY LIST	'01bd	'02a1	01bd	445	445	44,5
-  HPdata[i].Name    := 'Actual flow';
-  HPdata[i].Request := #$0d#$00#$03#$01#$00#$fa#$01#$d6#$80#$08#$02#$6a;
-  HPdata[i].Device  := DEV_BOILER;
-  HPdata[i].Circuit := CIRC_GEN;
-  HPdata[i].RegAddr := $01d6;
-  HPdata[i].Scaling := 0.1;
-  HPdata[i].Units   := ' °C';
-  HPdata[i].Series  :=  Series4;
-  inc(i);
-
   HPdata[i].Name    := 'Buffer set';
   HPdata[i].Request := '';
   HPdata[i].Device  := DEV_CONTROL;
@@ -805,19 +812,40 @@ begin
   HPdata[i].Series  := nil;
   inc(i);
 
-//======================================================================================================================
-
-  HPdata[i].Name    := '0052 BURNER';
-  HPdata[i].Request := #$0d#$00#$0c#$01#$02#$fa#$00#$52#$00#$00#$01#$68;
-  HPdata[i].Device  := DEV_MIXER;
-  HPdata[i].Circuit := CIRC_HC2;
-  HPdata[i].RegAddr := $0052;
-  HPdata[i].Scaling := 1/256 * 1.0;
-  HPdata[i].Units   := '';
-  HPdata[i].Series  :=  Series5;
+    // 0d 00 03 01 00 fa 01 d6 80 08 02 6a 	 03 00 0d 02 00 fa 01 d6 01 bd 02 a1 	'0d	'03	'01 read	'00fa	'01d6 WP PRELIMINARY LIST	'8008	'026a		'03	'0d	'02	'00fa	'01d6 WP PRELIMINARY LIST	'01bd	'02a1	01bd	445	445	44,5
+  HPdata[i].Name    := 'Charge flow';
+  HPdata[i].Request := '';
+  HPdata[i].Device  := DEV_HEATING;
+  HPdata[i].Circuit := CIRC_GEN;
+  HPdata[i].RegAddr := $0822;
+  HPdata[i].Scaling := 0.1;
+  HPdata[i].Units   := ' °C';
+  HPdata[i].Series  :=  Series4;
   inc(i);
 
-  HPdata[i].Name    := 'Pump hot water';
+  HPdata[i].Name    := 'Charge return';
+  HPdata[i].Request := '';
+  HPdata[i].Device  := DEV_HEATING;
+  HPdata[i].Circuit := CIRC_GEN;
+  HPdata[i].RegAddr := $0823;
+  HPdata[i].Scaling := 0.1;
+  HPdata[i].Units   := ' °C';
+  HPdata[i].Series  := Series10;
+  inc(i);
+
+  HPdata[i].Name    := 'Chg flow rate';
+  HPdata[i].Request := '';
+  HPdata[i].Device  := DEV_HEATING;
+  HPdata[i].Circuit := CIRC_GEN;
+  HPdata[i].RegAddr := $0a3f;
+  HPdata[i].Scaling := 0.1;
+  HPdata[i].Units   := '';
+  HPdata[i].Series  := nil;
+  inc(i);
+
+//======================================================================================================================
+
+  HPdata[i].Name    := 'Chg Pump hot water';
   HPdata[i].Request := #$0d#$00#$03#$01#$00#$fa#$00#$53#$00#$00#$01#$5e;
   HPdata[i].Device  := DEV_BOILER;
   HPdata[i].Circuit := CIRC_GEN;
@@ -827,7 +855,7 @@ begin
   HPdata[i].Series  :=  Series6;
   inc(i);
 
-  HPdata[i].Name    := 'Pump heating';
+  HPdata[i].Name    := 'Chg Pump heating';
   HPdata[i].Request := #$0d#$00#$03#$01#$00#$fa#$00#$63#$00#$00#$01#$6e;
   HPdata[i].Device  := DEV_BOILER;
   HPdata[i].Circuit := CIRC_GEN;
@@ -837,7 +865,17 @@ begin
   HPdata[i].Series  :=  Series7;
   inc(i);
 
-  HPdata[i].Name    := '0064 COLLECTOR';
+  HPdata[i].Name    := '0052 BURNER ?';
+  HPdata[i].Request := #$0d#$00#$0c#$01#$02#$fa#$00#$52#$00#$00#$01#$68;
+  HPdata[i].Device  := DEV_MIXER;
+  HPdata[i].Circuit := CIRC_HC2;
+  HPdata[i].RegAddr := $0052;
+  HPdata[i].Scaling := 1/256 * 1.0;
+  HPdata[i].Units   := '';
+  HPdata[i].Series  :=  Series5;
+  inc(i);
+
+  HPdata[i].Name    := '0064 COLLECTOR ?';
   HPdata[i].Request := #$0d#$00#$03#$01#$00#$fa#$00#$64#$00#$00#$01#$6f;
   HPdata[i].Device  := DEV_BOILER;
   HPdata[i].Circuit := CIRC_GEN;
@@ -847,7 +885,7 @@ begin
   HPdata[i].Series  :=  Series8;
   inc(i);
 
-  HPdata[i].Name    := 'fdac PUMP MIXER?';
+  HPdata[i].Name    := 'fdac PUMP ?';
   HPdata[i].Request := #$0d#$00#$09#$01#$00#$fa#$fd#$ac#$00#$00#$02#$ba;
   HPdata[i].Device  := DEV_MANAGER;
   HPdata[i].Circuit := CIRC_GEN;
@@ -913,6 +951,15 @@ begin
   HPdata[i].Series  := nil;
   inc(i);
 
+  HPdata[i].Name    := 'Evaporator temperature';
+  HPdata[i].Device  := DEV_HEATING;
+  HPdata[i].Circuit := CIRC_GEN;
+  HPdata[i].RegAddr := $0821;
+  HPdata[i].Scaling := 0.1;
+  HPdata[i].Units   := ' °C';
+  HPdata[i].Series  := nil;
+  inc(i);
+ 
   HPdata[i].Name    := 'Defrost active';
   HPdata[i].Device  := DEV_HEATING;
   HPdata[i].Circuit := CIRC_GEN;
@@ -927,12 +974,10 @@ begin
   HPdata[i].Circuit := CIRC_GEN;
   HPdata[i].RegAddr := $0807;
   HPdata[i].Scaling := 1;
-  HPdata[i].Units   := '';
+  HPdata[i].Units   := ' min';
   HPdata[i].Series  := nil;
   inc(i);
- 
-
-  
+   
   gridData.RowCount := Length(HPdata);
   gridData.ColWidths[0] := 200;
   gridData.ColWidths[1] := 200;
