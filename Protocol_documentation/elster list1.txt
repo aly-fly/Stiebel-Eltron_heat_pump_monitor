@@ -1,0 +1,121 @@
+Turbo Dump  Version 6.5.4.0 Copyright (c) 1988-2016 Embarcadero Technologies, Inc.
+                    Display of File elster.dll
+
+Old Executable Header
+
+DOS File Size                                      28000h  (163840. )
+Load Image Size                                      450h  (  1104. )
+Relocation Table entry count                          0000h  (     0. )
+Relocation Table address                              0040h  (    64. )
+Size of header record      (in paragraphs)            0004h  (     4. )
+Minimum Memory Requirement (in paragraphs)            0000h  (     0. )
+Maximum Memory Requirement (in paragraphs)            FFFFh  ( 65535. )
+File load checksum                                    0000h  (     0. )
+Overlay Number                                        0000h  (     0. )
+
+Initial Stack Segment  (SS:SP)			  0000:00B8
+Program Entry Point    (CS:IP)			  0000:0000
+
+
+Portable Executable (PE) File
+
+Header base: 00000080
+
+CPU type                 80386
+Flags                    2102 [ executable linenumbers symbols backwards 32bit library ]
+DLL flags                8540 [ DynamicBase NXCompat NoSEH TermServ ]
+Linker Version           8.0
+Time stamp               4E2042DC : Fri Jul 15 15:38:36 2011
+O/S Version              4.0
+User Version             0.0
+Subsystem Version        4.0
+Subsystem                0003 [ Windows character ]
+Object count             00000003
+Symbols offset           00000000
+Symbols count            00000000
+Optional header size     00E0
+Magic #                  10B
+Code size                00025000
+Init Data size           00002000
+Uninit Data size         00000000
+Entry RVA                000265DE
+Image base               00400000
+Code base                00002000
+Data base                00028000
+Object/File align        00002000/00001000
+Reserved                 00000000
+Image size               0002C000
+Header size              00001000
+Checksum                 00000000
+Stack reserve/commit     00100000/00001000
+Heap reserve/commit      00100000/00001000
+Number interesting RVAs  00000010
+Name                   RVA       Size  
+------------------  --------  --------
+Exports             00000000  00000000
+Imports             0002658C  0000004F
+Resources           00028000  00000408
+Exceptions          00000000  00000000
+Security            00000000  00000000
+Fixups              0002A000  0000000C
+Debug               000264F4  0000001C
+Description         00000000  00000000
+Global Ptr          00000000  00000000
+TLS                 00000000  00000000
+Callbacks           00000000  00000000
+Bound Imports       00000000  00000000
+Import Addr Table   00002000  00000008
+Delayed Imports     00000000  00000000
+COM Runtime         00002008  00000048
+reserved            00000000  00000000
+
+Object table:
+#   Name              VirtSize    RVA     PhysSize  Phys off  Flags   
+--  --------          --------  --------  --------  --------  --------
+01  .text             000245E4  00002000  00025000  00001000  60000020 [CER]
+02  .rsrc             00000408  00028000  00001000  00026000  40000040 [IR]
+03  .reloc            0000000C  0002A000  00001000  00027000  42000040 [DIR]
+
+Key to section flags:
+  C - contains code
+  D - discardable
+  E - executable
+  I - contains initialized data
+  R - readable
+
+******************************************************************************
+Section:             Import
+File Offset:         00001000 (4096)
+  ImportLookUpTblRVA:000265B4
+  Time Stamp:        00000000
+  Forwarder Chain:   00000000 (index of first forwarder reference)
+
+Imports from mscoree.dll
+                  _CorDllMain
+
+******************************************************************************
+Section:             Resources
+File Offset:         00026000 (155648)
+  Flags:             00000000
+  Time Stamp:        00000000
+  Major Version:     0000
+  Minor Version:     0000
+
+Resources:
+Type          Name                   Lang Id
+--------------------------------------------
+[0 named entries, 1 ID entries]
+type: Version (16)  (next directory @00000018)
+
+              [0 named entries, 1 ID entries]
+              type: Cursor (1)  (next directory @00000030)
+
+                                     [0 named entries, 1 ID entries]
+                                     type: Unknown (0)  (data @00000048)
+                                         Offset:    00028058
+                                         Size:      000003AC
+                                         Code Page: 00000000
+                                         Reserved:  00000000
+
+
+
