@@ -35,10 +35,8 @@ type
     LineSeries10: TLineSeries;
     gridData: TStringGrid;
     Series4: TLineSeries;
-    Series5: TLineSeries;
     Series6: TLineSeries;
     Series7: TLineSeries;
-    Series8: TLineSeries;
     Series9: TLineSeries;
     cbDebug: TCheckBox;
     grpSettings: TGroupBox;
@@ -70,6 +68,7 @@ type
     lblCurrTime: TLabel;
     Series10: TLineSeries;
     Series12: TLineSeries;
+    Series5: TLineSeries;
     procedure btnComSearchClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnComOpenClick(Sender: TObject);
@@ -691,7 +690,7 @@ var
   
 begin
   SenderChart := nil;
-  SetLength(HPdata, 16+7+4);
+  SetLength(HPdata, 15+7+4);
   i := 0;
 
 // 0d 00 03 01 00 fa 00 0c 80 08 01 9f 	 03 00 0d 02 00 fa 00 0c 00 40 01 58 	'0d	'03	'01 read	'00fa	'000c zunanja temp
@@ -865,6 +864,16 @@ begin
   HPdata[i].Series  :=  Series7;
   inc(i);
 
+  HPdata[i].Name    := 'Pump Circuit 1';
+  HPdata[i].Request := #$0d#$00#$09#$01#$00#$fa#$fd#$ac#$00#$00#$02#$ba;
+  HPdata[i].Device  := DEV_MANAGER;
+  HPdata[i].Circuit := CIRC_GEN;
+  HPdata[i].RegAddr := $fdac;
+  HPdata[i].Scaling := 1/512 * 1.20;
+  HPdata[i].Units   := '';
+  HPdata[i].Series  :=  Series9;
+  inc(i);
+(*
   HPdata[i].Name    := '0052 BURNER ?';
   HPdata[i].Request := #$0d#$00#$0c#$01#$02#$fa#$00#$52#$00#$00#$01#$68;
   HPdata[i].Device  := DEV_MIXER;
@@ -874,27 +883,7 @@ begin
   HPdata[i].Units   := '';
   HPdata[i].Series  :=  Series5;
   inc(i);
-
-  HPdata[i].Name    := '0064 COLLECTOR ?';
-  HPdata[i].Request := #$0d#$00#$03#$01#$00#$fa#$00#$64#$00#$00#$01#$6f;
-  HPdata[i].Device  := DEV_BOILER;
-  HPdata[i].Circuit := CIRC_GEN;
-  HPdata[i].RegAddr := $0064;
-  HPdata[i].Scaling := 1/256 * 1.15;
-  HPdata[i].Units   := '';
-  HPdata[i].Series  :=  Series8;
-  inc(i);
-
-  HPdata[i].Name    := 'fdac PUMP ?';
-  HPdata[i].Request := #$0d#$00#$09#$01#$00#$fa#$fd#$ac#$00#$00#$02#$ba;
-  HPdata[i].Device  := DEV_MANAGER;
-  HPdata[i].Circuit := CIRC_GEN;
-  HPdata[i].RegAddr := $fdac;
-  HPdata[i].Scaling := 1/512 * 1.20;
-  HPdata[i].Units   := '';
-  HPdata[i].Series  :=  Series9;
-  inc(i);
-
+*)
 //--------------------------------------------------------------------------------------------------------------------
 
   HPdata[i].Name    := 'Fan speed';
@@ -958,6 +947,15 @@ begin
   HPdata[i].Scaling := 0.1;
   HPdata[i].Units   := ' °C';
   HPdata[i].Series  := nil;
+  inc(i);
+ 
+  HPdata[i].Name    := 'Expelled air';
+  HPdata[i].Device  := DEV_HEATING;
+  HPdata[i].Circuit := CIRC_GEN;
+  HPdata[i].RegAddr := $0a38;
+  HPdata[i].Scaling := 0.1;
+  HPdata[i].Units   := ' °C';
+  HPdata[i].Series  := Series5;
   inc(i);
  
   HPdata[i].Name    := 'Defrost active';

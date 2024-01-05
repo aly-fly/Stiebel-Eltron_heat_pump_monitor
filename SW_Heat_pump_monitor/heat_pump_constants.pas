@@ -56,36 +56,33 @@ const
   ('02fa','HC 2')
   );
 
-  (*
-	errors = (
-		0x0000: "No error",
-		0x0002: "Schuetz klebt",
-		0x0003: "ERR HD-SENSOR",
-		0x0004: "Hochdruck",
-		0x0005: "Verdampferfuehler",
-		0x0006: "Relaistreiber",
-		0x0007: "Relaispegel",
-		0x0008: "Hexschalter",
-		0x0009: "Drehzahl Luefter",
-		0x000a: "Lueftertreiber",
-		0x000b: "Reset Baustein",
-		0x000c: "ND",
-		0x000d: "ROM",
-		0x000e: "QUELLEN MINTEMP",
-		0x0010: "Abtauen",
-		0x0012: "ERR T-HEI IWS",
-		0x0017: "ERR T-FRO IWS",
-		0x001a: "Niederdruck",
-		0x001b: "ERR ND-DRUCK",
-		0x001c: "ERR HD-DRUCK",
-		0x001d: "HD-SENSOR-MAX",
-		0x001e: "HEISSGAS-MAX",
-		0x001f: "ERR HD-SENSOR",
-		0x0020: "Einfrierschutz",
-		0x0021: "KEINE LEISTUNG"
-	*)
-
-  cErrors : array [1..9] of TerrTypes = (
+  cErrors : array [1..25+9] of TerrTypes = (
+  (number: $0000; descr: 'No error'),
+  (number: $0002; descr: 'Schuetz klebt'),
+  (number: $0003; descr: 'ERR HD-SENSOR'),
+  (number: $0004; descr: 'Hochdruck'),
+  (number: $0005; descr: 'Verdampferfuehler'),
+  (number: $0006; descr: 'Relaistreiber'),
+  (number: $0007; descr: 'Relaispegel'),
+  (number: $0008; descr: 'Hexschalter'),
+  (number: $0009; descr: 'Drehzahl Luefter'),
+  (number: $000a; descr: 'Lueftertreiber'),
+  (number: $000b; descr: 'Reset Baustein'),
+  (number: $000c; descr: 'ND'),
+  (number: $000d; descr: 'ROM'),
+  (number: $000e; descr: 'QUELLEN MINTEMP'),
+  (number: $0010; descr: 'Abtauen'),
+  (number: $0012; descr: 'ERR T-HEI IWS'),
+  (number: $0017; descr: 'ERR T-FRO IWS'),
+  (number: $001a; descr: 'Niederdruck'),
+  (number: $001b; descr: 'ERR ND-DRUCK'),
+  (number: $001c; descr: 'ERR HD-DRUCK'),
+  (number: $001d; descr: 'HP SENSOR MAX'),
+  (number: $001e; descr: 'HOT GAS MAX'),
+  (number: $001f; descr: 'ERR HP SENSOR'),
+  (number: $0020; descr: 'Einfrierschutz'),
+  (number: $0021; descr: 'KEINE LEISTUNG'),
+  
   (number: $1FB0; descr: 'INVH AC UBAL'),
   (number: $1FB4; descr: 'INVH AUST'),
   (number: $1FCD; descr: 'INVN FATAL ERR'),

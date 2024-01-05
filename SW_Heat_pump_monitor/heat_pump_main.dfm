@@ -391,6 +391,16 @@ object FormHPmonitor: TFormHPmonitor
       YValues.Name = 'Y'
       YValues.Order = loNone
     end
+    object Series5: TLineSeries
+      SeriesColor = clSilver
+      Brush.BackColor = clDefault
+      Pointer.InflateMargins = True
+      Pointer.Style = psRectangle
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Y'
+      YValues.Order = loNone
+    end
   end
   object Chart2: TChart
     Left = 391
@@ -620,35 +630,11 @@ object FormHPmonitor: TFormHPmonitor
       YValues.Name = 'Y'
       YValues.Order = loNone
     end
-    object Series8: TLineSeries
-      SeriesColor = clFuchsia
-      VertAxis = aRightAxis
-      Brush.BackColor = clDefault
-      LinePen.Style = psDot
-      Pointer.InflateMargins = True
-      Pointer.Style = psRectangle
-      XValues.Name = 'X'
-      XValues.Order = loAscending
-      YValues.Name = 'Y'
-      YValues.Order = loNone
-    end
     object Series9: TLineSeries
       SeriesColor = clAqua
       VertAxis = aRightAxis
       Brush.BackColor = clDefault
-      LinePen.Style = psDot
-      Pointer.InflateMargins = True
-      Pointer.Style = psRectangle
-      XValues.Name = 'X'
-      XValues.Order = loAscending
-      YValues.Name = 'Y'
-      YValues.Order = loNone
-    end
-    object Series5: TLineSeries
-      SeriesColor = 8388863
-      VertAxis = aRightAxis
-      Brush.BackColor = clDefault
-      LinePen.Style = psDot
+      LinePen.Width = 2
       Pointer.InflateMargins = True
       Pointer.Style = psRectangle
       XValues.Name = 'X'
