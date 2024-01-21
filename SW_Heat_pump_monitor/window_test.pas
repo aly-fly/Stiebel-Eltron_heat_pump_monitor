@@ -271,6 +271,7 @@ end;
 procedure TFormTest.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   Stop := True;
+  AfterReading();    
 end;
 
 procedure TFormTest.FormCreate(Sender: TObject);
@@ -352,6 +353,7 @@ end;
 procedure TFormTest.FormShow(Sender: TObject);
 begin
   cbDebug.Checked := PrintDebugMsg;
+  if rgDevices.Items.Count > 0 then btnScanRegisters.Enabled := True;  
 end;
 
 procedure TFormTest.SaveToFile(Name : string);

@@ -13,8 +13,9 @@ type
     procedure FormCreate(Sender: TObject);
     procedure btnReadEnergyDataClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
-    { Private declarations }
+    Stop : Boolean;
   public
     BeforeReading: procedure;
     AfterReading: procedure;
@@ -39,6 +40,8 @@ var
   
 begin
   BeforeReading();
+  Stop := False;
+  Screen.Cursor := crHourGlass;
 (*
 A	0	'091A'	 EL_AFNAHMELEISTUNG_WW_TAG_WH	976
 A	0	'091B'	 EL_AFNAHMELEISTUNG_WW_TAG_KWH	0
@@ -84,8 +87,21 @@ A	0	'0931'	 WAERMEERTRAG_HEIZ_SUM_MWH	259
     if HPCommRead(Data, 0, False) then
       if HPCommRead(Data, 1, False) then
         GridEnergy.Cells[col, row] := floattostrf(data[0].Value + data[1].Value, fffixed, 5, 3);  
+
+    if Application.Terminated or Stop then
+      begin
+      Screen.Cursor := crDefault;
+      exit; 
+      end;
     end;
 
+  AfterReading();    
+  Screen.Cursor := crDefault;
+end;
+
+procedure TFormEnergy.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Stop := True;
   AfterReading();    
 end;
 

@@ -9,7 +9,9 @@ uses
   heat_pump_comm in 'heat_pump_comm.pas',
   heat_pump_constants in 'heat_pump_constants.pas',
   window_energy in 'window_energy.pas' {FormEnergy},
-  window_errors in 'window_errors.pas' {FormErrors};
+  window_errors in 'window_errors.pas' {FormErrors},
+  SendEmail in 'SendEmail.pas' {FormSendEmail},
+  window_settings in 'window_settings.pas' {FormSettings};
 
 {$R *.res}
 
@@ -20,5 +22,7 @@ begin
   Application.CreateForm(TFormTest, FormTest);
   Application.CreateForm(TFormEnergy, FormEnergy);
   Application.CreateForm(TFormErrors, FormErrors);
+  Application.CreateForm(TFormSendEmail, FormSendEmail);
+  Application.CreateForm(TFormSettings, FormSettings);
   Application.Run;
 end.

@@ -2,7 +2,9 @@ object FormHPmonitor: TFormHPmonitor
   Left = 0
   Top = 0
   BorderStyle = bsSingle
-  Caption = 'Stiebel Eltron heat pump WPM manager over optical interface'
+  Caption = 
+    'Stiebel Eltron heat pump WPM manager over optical interface [by ' +
+    'Aljaz Ogrin]'
   ClientHeight = 871
   ClientWidth = 1194
   Color = clBtnFace
@@ -19,10 +21,9 @@ object FormHPmonitor: TFormHPmonitor
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object pnl1: TPanel
+  object pnlComm: TPanel
     Left = 0
     Top = 0
     Width = 391
@@ -77,23 +78,21 @@ object FormHPmonitor: TFormHPmonitor
     end
     object mm1: TMemo
       Left = 8
-      Top = 762
+      Top = 768
       Width = 377
-      Height = 100
+      Height = 97
       Font.Charset = EASTEUROPE_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Arial Narrow'
       Font.Style = []
-      Lines.Strings = (
-        'mm1')
       ParentFont = False
       ScrollBars = ssVertical
       TabOrder = 5
     end
     object cbReadConstatntly: TCheckBox
-      Left = 8
-      Top = 122
+      Left = 101
+      Top = 93
       Width = 75
       Height = 17
       Caption = 'Constatntly'
@@ -103,9 +102,9 @@ object FormHPmonitor: TFormHPmonitor
     end
     object gridData: TStringGrid
       Left = 8
-      Top = 199
+      Top = 120
       Width = 377
-      Height = 557
+      Height = 642
       ColCount = 2
       DefaultRowHeight = 19
       RowCount = 1
@@ -120,200 +119,57 @@ object FormHPmonitor: TFormHPmonitor
       OnClick = gridDataClick
     end
     object cbDebug: TCheckBox
-      Left = 8
-      Top = 145
-      Width = 75
+      Left = 316
+      Top = 66
+      Width = 63
       Height = 17
       Caption = 'Debug'
       TabOrder = 8
       OnClick = cbDebugClick
     end
-    object grpSettings: TGroupBox
-      Left = 89
-      Top = 39
-      Width = 296
-      Height = 154
-      Caption = ' Settings '
-      Color = clScrollBar
-      ParentBackground = False
-      ParentColor = False
-      TabOrder = 9
-      object Label1: TLabel
-        Left = 30
-        Top = 36
-        Width = 19
-        Height = 13
-        Caption = 'Day'
-      end
-      object Label2: TLabel
-        Left = 30
-        Top = 63
-        Width = 25
-        Height = 13
-        Caption = 'Night'
-      end
-      object Label3: TLabel
-        Left = 70
-        Top = 14
-        Width = 27
-        Height = 13
-        Caption = 'Circ 1'
-      end
-      object Label4: TLabel
-        Left = 143
-        Top = 14
-        Width = 27
-        Height = 13
-        Caption = 'Circ 2'
-      end
-      object lblWater: TLabel
-        Left = 214
-        Top = 14
-        Width = 30
-        Height = 13
-        Caption = 'Water'
-      end
-      object Label5: TLabel
-        Left = 11
-        Top = 101
-        Width = 38
-        Height = 13
-        Alignment = taCenter
-        AutoSize = False
-        Caption = 'Party'
-      end
-      object lblCurrTime: TLabel
-        Left = 136
-        Top = 110
-        Width = 69
-        Height = 40
-        Hint = 'Current time at time of reading settings'
-        Alignment = taCenter
-        AutoSize = False
-        Caption = 'Time'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Tahoma'
-        Font.Style = [fsBold]
-        ParentFont = False
-        ParentShowHint = False
-        ShowHint = True
-      end
-      object edC1Day: TEdit
-        Left = 70
-        Top = 33
-        Width = 57
-        Height = 21
-        TabOrder = 0
-      end
-      object edC2Day: TEdit
-        Left = 143
-        Top = 33
-        Width = 57
-        Height = 21
-        TabOrder = 1
-      end
-      object edC1night: TEdit
-        Left = 70
-        Top = 60
-        Width = 57
-        Height = 21
-        TabOrder = 2
-      end
-      object edC2Night: TEdit
-        Left = 143
-        Top = 60
-        Width = 57
-        Height = 21
-        TabOrder = 3
-      end
-      object edWaterDay: TEdit
-        Left = 214
-        Top = 33
-        Width = 57
-        Height = 21
-        TabOrder = 4
-      end
-      object edWaterNight: TEdit
-        Left = 214
-        Top = 60
-        Width = 57
-        Height = 21
-        TabOrder = 5
-      end
-      object ddHPMode: TComboBox
-        Left = 70
-        Top = 87
-        Width = 201
-        Height = 21
-        Style = csDropDownList
-        TabOrder = 6
-        Items.Strings = (
-          'Standby / off'
-          'Automatic'
-          'Day'
-          'Night'
-          'Water only'
-          'Emergency (electric only)')
-      end
-      object btnSettingsRead: TButton
-        Left = 70
-        Top = 114
-        Width = 67
-        Height = 25
-        Caption = 'Read'
-        Enabled = False
-        TabOrder = 7
-        OnClick = btnSettingsReadClick
-      end
-      object btnSettingsWrite: TButton
-        Left = 204
-        Top = 114
-        Width = 67
-        Height = 25
-        Caption = 'Write'
-        Enabled = False
-        TabOrder = 8
-        OnClick = btnSettingsWriteClick
-      end
-      object edPartyHrs: TEdit
-        Left = 11
-        Top = 116
-        Width = 38
-        Height = 21
-        Hint = 'Number of hours tos stay in Day mode (schedule override)'
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 9
-      end
-    end
-    object btnLoadCharts: TButton
-      Left = 312
-      Top = 8
-      Width = 73
-      Height = 25
-      Caption = 'Load charts'
-      TabOrder = 10
-      OnClick = btnLoadChartsClick
-    end
     object btnTest: TButton
-      Left = 8
-      Top = 168
-      Width = 31
+      Left = 310
+      Top = 35
+      Width = 75
       Height = 25
       Caption = 'Test'
-      TabOrder = 11
+      TabOrder = 9
       OnClick = btnTestClick
     end
-    object btnShowEnergy: TButton
-      Left = 41
-      Top = 168
-      Width = 42
+    object btnEnergy: TButton
+      Left = 214
+      Top = 89
+      Width = 75
       Height = 25
       Caption = 'Energy'
+      TabOrder = 10
+      OnClick = btnEnergyClick
+    end
+    object cbLogCommErrors: TCheckBox
+      Left = 101
+      Top = 39
+      Width = 97
+      Height = 17
+      Caption = 'Log comm errors'
+      TabOrder = 11
+    end
+    object btnErrors: TButton
+      Left = 214
+      Top = 62
+      Width = 75
+      Height = 25
+      Caption = 'Errors'
       TabOrder = 12
-      OnClick = btnShowEnergyClick
+      OnClick = btnErrorsClick
+    end
+    object btnSettings: TButton
+      Left = 214
+      Top = 35
+      Width = 75
+      Height = 25
+      Caption = 'Settings'
+      TabOrder = 13
+      OnClick = btnSettingsClick
     end
   end
   object chart1: TChart
@@ -322,6 +178,7 @@ object FormHPmonitor: TFormHPmonitor
     Width = 802
     Height = 293
     Legend.Alignment = laTop
+    Legend.CheckBoxes = True
     Legend.Frame.Color = clSilver
     Legend.TopPos = 0
     Legend.VertMargin = 1
@@ -643,6 +500,15 @@ object FormHPmonitor: TFormHPmonitor
       YValues.Order = loNone
     end
   end
+  object btnLoadCharts: TButton
+    Left = 310
+    Top = 8
+    Width = 75
+    Height = 25
+    Caption = 'Load charts'
+    TabOrder = 4
+    OnClick = btnLoadChartsClick
+  end
   object timerAutoRead: TTimer
     Enabled = False
     Interval = 3000
@@ -650,11 +516,23 @@ object FormHPmonitor: TFormHPmonitor
     Left = 64
     Top = 304
   end
-  object tmrScroll: TTimer
+  object tmrScrollZoomCharts: TTimer
     Enabled = False
     Interval = 200
-    OnTimer = tmrScrollTimer
-    Left = 144
+    OnTimer = tmrScrollZoomChartsTimer
+    Left = 176
     Top = 312
+  end
+  object tmrStartup: TTimer
+    Interval = 3000
+    OnTimer = tmrStartupTimer
+    Left = 64
+    Top = 248
+  end
+  object OpenDialogTxt: TOpenDialog
+    Filter = 'Text (*.csv)|*.csv'
+    Options = [ofHideReadOnly, ofAllowMultiSelect, ofEnableSizing]
+    Left = 328
+    Top = 216
   end
 end

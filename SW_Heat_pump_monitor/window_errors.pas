@@ -10,6 +10,7 @@ type
   TFormErrors = class(TForm)
     btnReadErr: TButton;
     GridErrors: TStringGrid;
+    lblCountdown: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure btnReadErrClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -18,6 +19,7 @@ type
   public
     BeforeReading: procedure;
     AfterReading: procedure;
+    function ReadLastHPErrorTime : u16;
   end;
 
 var
@@ -29,6 +31,37 @@ implementation
 
 procedure dummy();
 begin
+  // NOP.
+end;
+
+function TFormErrors.ReadLastHPErrorTime : u16;
+var
+  Data : TAHPdata;
+  hh, mm : u16;
+  
+begin
+  BeforeReading();
+  Result := 0;
+  
+  SetLength(Data, 1);
+  Data[0].Device := DEV_BOILER;
+  Data[0].Circuit := 0;
+  Data[0].Scaling := 1;
+  
+  // read newest / latest
+  Data[0].RegAddr := $0B00 + ((19-0) * 7) + 0;  // minute
+  if HPCommRead(Data, 0, False) then mm := data[0].Data;
+  
+  Data[0].RegAddr := $0B00 + ((19-0) * 7) + 1;  // hour
+  if HPCommRead(Data, 0, False) then hh := data[0].Data;
+
+  Result := ((hh shl 8) OR mm) AND $FFFF;
+
+  // time
+  GridErrors.Cells[2, 1] := LeadingZeros(hh, 2) + ':' + LeadingZeros(mm, 2);
+  
+  SetLength(Data, 0);   
+  AfterReading();
 end;
 
 procedure TFormErrors.btnReadErrClick(Sender: TObject);
@@ -36,7 +69,7 @@ var
   Data : TAHPdata;
   ErrData : array[0..6] of word;
   Num, Field, i : Integer;
-  s1 : string;  
+  s1, s2 : string;  
 
 begin
   BeforeReading();
@@ -99,24 +132,28 @@ begin
     // time
     s1 := LeadingZeros(ErrData[1], 2) + ':' + LeadingZeros(ErrData[0], 2);
     GridErrors.Cells[2, Num+1] := s1;
-    // Device
+(*
+    // Device (always 0 --> ignore)
     s1 := IntToHex(ErrData[5], 4);
     GridErrors.Cells[3, Num+1] := s1;
+*)  
     // Code
     s1 := IntToHex(ErrData[6], 4);
-    GridErrors.Cells[4, Num+1] := s1;
+    GridErrors.Cells[3, Num+1] := s1;
     // Description
     s1 := '';
     for i := 1 to Length(cErrors) do
       begin
       if cErrors[i].number = ErrData[6] then
         begin
-        s1 := cErrors[i].descr;
+        s1 := cErrors[i].display;
+        s2 := cErrors[i].descr;
         break;
         end;    
       end;
     
-    GridErrors.Cells[5, Num+1] := s1;
+    GridErrors.Cells[4, Num+1] := s1;
+    GridErrors.Cells[5, Num+1] := s2;
     end;
 
 //  GridErrors.Col := 0;
@@ -130,6 +167,7 @@ end;
 procedure TFormErrors.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Stop := True;
+  AfterReading();    
 end;
 
 procedure TFormErrors.FormCreate(Sender: TObject);
@@ -141,15 +179,16 @@ begin
   BeforeReading := dummy;
   AfterReading := dummy;
 
-  GridErrors.ColWidths[0] := 25;
-  GridErrors.ColWidths[5] := 250;
+  GridErrors.ColWidths[0] := 25; // number
+  GridErrors.ColWidths[4] := 120; // display
+  GridErrors.ColWidths[5] := 570; // description
 
   GridErrors.Cells[0, 0] := '#';
   GridErrors.Cells[1, 0] := 'Date';
   GridErrors.Cells[2, 0] := 'Time';
-  GridErrors.Cells[3, 0] := 'Device';
-  GridErrors.Cells[4, 0] := 'Err code';
-  GridErrors.Cells[5, 0] := 'Err description';
+  GridErrors.Cells[3, 0] := 'Err code';
+  GridErrors.Cells[4, 0] := 'Display';
+  GridErrors.Cells[5, 0] := 'Error description';
 
   for i := 1 to 20 do
     GridErrors.Cells[0, i] := IntToStr(i);

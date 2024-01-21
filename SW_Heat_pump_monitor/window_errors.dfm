@@ -4,8 +4,8 @@ object FormErrors: TFormErrors
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Errors'
-  ClientHeight = 425
-  ClientWidth = 639
+  ClientHeight = 434
+  ClientWidth = 993
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,6 +17,14 @@ object FormErrors: TFormErrors
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
+  object lblCountdown: TLabel
+    Left = 920
+    Top = 13
+    Width = 65
+    Height = 13
+    Alignment = taRightJustify
+    Caption = 'lblCountdown'
+  end
   object btnReadErr: TButton
     Left = 8
     Top = 8
@@ -29,11 +37,11 @@ object FormErrors: TFormErrors
   object GridErrors: TStringGrid
     Left = 8
     Top = 39
-    Width = 625
-    Height = 378
+    Width = 977
+    Height = 386
     ColCount = 6
     DefaultColWidth = 80
-    DefaultRowHeight = 16
+    DefaultRowHeight = 17
     RowCount = 21
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

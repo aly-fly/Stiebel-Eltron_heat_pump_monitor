@@ -128,6 +128,7 @@ const
   function TrimAlfaNum (StrIn : string) : string; // Trim vse znake, ki niso v abacedi in èrke, tudi brez loèil
   function TrimNumDotComma (StrIn : string) : string; // Trim vse znake, ki niso številke, vkljuèi pike in vejice
   function TrimNum (StrIn : string) : string; //  Trim vse znake, ki niso številke
+  function TrimEmail (StrIn : string) : string;
 
   function ArrayToString(DataIn : pointer; NumBytes : byte) : AnsiString;
 
@@ -793,7 +794,7 @@ begin
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
-function Trim2 (StrIn : string) : string; // Trim vse znake, ki niso v abacedi in èrke
+function Trim2 (StrIn : string) : string; // Trim vse znake, ki niso v abacedi ali številke
 var
   i : integer;
   S : string;
@@ -824,6 +825,23 @@ begin
     begin
       C := S[i];
       if (C in ['A'..'Z']) OR (C in ['a'..'z']) OR (C in ['0'..'9']) then Result := Result + C;
+    end;
+end;
+
+function TrimEmail (StrIn : string) : string;
+var
+  i : integer;
+  S : string;
+  C : char;
+
+begin
+  S := Trim (StrIn);
+  Result := '';
+
+  for i := 1 to Length(S) do
+    begin
+      C := S[i];
+      if (C in ['A'..'Z']) OR (C in ['a'..'z']) OR (C in ['0'..'9']) OR (C = '@') OR (C = '.') then Result := Result + C;
     end;
 end;
 

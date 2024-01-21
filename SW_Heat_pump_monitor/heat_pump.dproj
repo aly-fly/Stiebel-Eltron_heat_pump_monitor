@@ -89,6 +89,7 @@
         <AppEnableHighDPI>true</AppEnableHighDPI>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <Debugger_RunParams>/fview</Debugger_RunParams>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -124,6 +125,14 @@
         </DCCReference>
         <DCCReference Include="window_errors.pas">
             <Form>FormErrors</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="SendEmail.pas">
+            <Form>FormSendEmail</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="window_settings.pas">
+            <Form>FormSettings</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Release">

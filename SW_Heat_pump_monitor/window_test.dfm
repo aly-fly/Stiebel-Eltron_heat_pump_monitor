@@ -106,6 +106,14 @@ object FormTest: TFormTest
     Width = 185
     Height = 162
     Caption = ' Devices '
+    Items.Strings = (
+      '00 00 Boiler 0 '
+      '02 01 Control 1'
+      '02 02 Control 2'
+      '04 00 Manager 0'
+      '05 00 Heating 0'
+      '06 01 Mixer 1 '
+      '06 02 Mixer 2 ')
     TabOrder = 4
   end
   object btnScanRegisters: TButton
