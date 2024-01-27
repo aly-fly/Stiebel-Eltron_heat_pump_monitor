@@ -1,0 +1,4 @@
+
+
+- param: heating power requirement setting
+- param: room influence setting

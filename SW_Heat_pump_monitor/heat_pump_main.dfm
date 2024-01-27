@@ -53,6 +53,7 @@ object FormHPmonitor: TFormHPmonitor
       Width = 75
       Height = 25
       Caption = 'Open'
+      Enabled = False
       TabOrder = 2
       OnClick = btnComOpenClick
     end
@@ -76,7 +77,7 @@ object FormHPmonitor: TFormHPmonitor
       TabOrder = 4
       OnClick = btnReadDataClick
     end
-    object mm1: TMemo
+    object mmLog: TMemo
       Left = 8
       Top = 768
       Width = 377

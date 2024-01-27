@@ -24,7 +24,7 @@ type
     btnComOpen: TButton;
     btnComClose: TButton;
     btnReadData: TButton;
-    mm1: TMemo;
+    mmLog: TMemo;
     timerAutoRead: TTimer;
     cbReadConstatntly: TCheckBox;
     Chart2: TChart;
@@ -91,7 +91,7 @@ type
     function  HPCommReadLog(var Dataset : TAHPdata; Didx : Integer; Test : Boolean) : Boolean;
     function  HPCommWriteLog(var Dataset : TAHPdata; Didx : Integer) : Boolean;    
   public
-    //...
+    procedure LogError(txt : string);
   end;
 
       
@@ -111,11 +111,24 @@ implementation
 
 procedure DisplayDebug (sss : string);
 begin
-  if FormHPmonitor.cbDebug.Checked then FormHPmonitor.mm1.Lines.Add(sss);
+  if FormHPmonitor.cbDebug.Checked then FormHPmonitor.LogError(sss);
 end;
 procedure DisplayError (sss : string);
 begin
-  FormHPmonitor.mm1.Lines.Add(sss);
+  FormHPmonitor.LogError(sss);
+end;
+
+procedure TFormHPmonitor.LogError(txt : string);
+var
+  DateFormat : TFormatSettings;
+  
+begin
+  DateFormat.DateSeparator := '.';
+  DateFormat.TimeSeparator := ':';
+  DateFormat.ShortDateFormat := 'DD.MM. HH:MM';
+  DateFormat.LongDateFormat  := 'DD.MM. HH:MM';
+
+  mmLog.Lines.Add('['+DateTimeToStr(Now(), DateFormat)+'] ' + txt);
 end;
 
 function  TFormHPmonitor.HPCommReadLog(var Dataset : TAHPdata; Didx : Integer; Test : Boolean) : Boolean;
@@ -126,7 +139,7 @@ begin
     begin
     // ignore the Reading error if not requested by the user/checkbox
     if (Pos('Error reading data.', HPLastMessage) <> 1) OR cbLogCommErrors.Checked then
-      mm1.Lines.Add(HPLastMessage);  
+      LogError(HPLastMessage);  
     end;
 end;
 
@@ -134,7 +147,7 @@ function  TFormHPmonitor.HPCommWriteLog(var Dataset : TAHPdata; Didx : Integer) 
 begin
   HPLastMessage := '';
   Result := HPCommWrite(Dataset, Didx);
-  if HPLastMessage <> '' then mm1.Lines.Add(HPLastMessage);  
+  if HPLastMessage <> '' then LogError(HPLastMessage);  
 end;
 
 procedure TFormHPmonitor.btnComCloseClick(Sender: TObject);
@@ -199,33 +212,33 @@ begin
   FormTest.btnScanAllDevReg.Enabled := True;
   FormTest.btnReadMan.Enabled := True;
 
-  mm1.Clear;
+  mmLog.Clear;
 
   // 0d 00 0d 01 00 0b 00 00 00 00 00 26 	 55 55 55 55 55 55 55 55 55 55 03 52  '0d PC	'0d PC	'01 Read	'000b	'0000	'0000	'0026
   // check connection
   if HPCommReadLog(HPcheck, 0, True) 
     then 
       begin
-      mm1.Lines.Add('Loopback Check 1 (TX/RX function) OK.');
+      LogError('Loopback Check 1 (TX/RX function) OK.');
       inc(InitOK);
       end
-    else mm1.Lines.Add('Loopback Check 1 (TX/RX function) fail!');
+    else LogError('Loopback Check 1 (TX/RX function) fail!');
     
   if copy(HPcheck[0].Response, 1, 12) = HPcheck[0].Request 
     then 
       begin
-      mm1.Lines.Add('Loopback Check 2 (IR echo) OK.');
+      LogError('Loopback Check 2 (IR echo) OK.');
       inc(InitOK);
       end
-    else mm1.Lines.Add('Loopback Check 2 (IR echo) fail!');
+    else LogError('Loopback Check 2 (IR echo) fail!');
 
   if copy(HPcheck[0].Response, 13, 10) = #$55#$55#$55#$55#$55#$55#$55#$55#$55#$55 
     then 
       begin
-      mm1.Lines.Add('Loopback Check 3 (response 0x55) OK.');
+      LogError('Loopback Check 3 (response 0x55) OK.');
       inc(InitOK);
       end
-    else mm1.Lines.Add('Loopback Check 3 (response 0x55) fail!');
+    else LogError('Loopback Check 3 (response 0x55) fail!');
 end;
 
 procedure TFormHPmonitor.btnComSearchClick(Sender: TObject);
@@ -242,7 +255,7 @@ begin
     then ddPortList.ItemIndex := ddPortList.Items.Count-1 // last
     else ddPortList.ItemIndex := -1;
     
-    
+  btnComOpen.Enabled := ddPortList.Items.Count > 0;    
 end;
 
 procedure TFormHPmonitor.btnErrorsClick(Sender: TObject);
@@ -266,7 +279,7 @@ var
   
 begin
   if cbDebug.Checked then
-    mm1.Lines.Add('Loading file...');
+    LogError('Loading file...');
 
   for param := 0 to chart1.SeriesCount-1 do
     chart1.Series[param].Clear; 
@@ -302,7 +315,7 @@ begin
   
     if not FileExists(FN2) then
       begin
-      mm1.Lines.Add('File doesn''t exist: ' + FN2);
+      LogError('File doesn''t exist: ' + FN2);
       Exit;
       end;
   
@@ -317,7 +330,7 @@ begin
       DivideString(Line, ';', SL);
       if SL.Count-2 <> Length(HPdata) then
         begin
-        mm1.Lines.Add('Data size mismatch on line ' + IntToStr(LineNum));
+        LogError('Data size mismatch on line ' + IntToStr(LineNum));
         if ViewOnlyMode then ShowMessage('Data size mismatch on line ' + IntToStr(LineNum));       
         SL.Destroy;
         CloseFile(F);
@@ -328,7 +341,7 @@ begin
       tt := StrToDateTimeDef(ss, 0);
       if tt = 0 then
         begin
-        mm1.Lines.Add('Incorrect DateTime on line ' + IntToStr(LineNum) + ': ' + ss);
+        LogError('Incorrect DateTime on line ' + IntToStr(LineNum) + ': ' + ss);
         if ViewOnlyMode then ShowMessage('Incorrect DateTime on line ' + IntToStr(LineNum) + ': ' + ss);
         SL.Destroy;
         CloseFile(F);
@@ -341,7 +354,7 @@ begin
         vv := StrToFloatDef(ss, -10000);
         if vv < -999 then
           begin
-          mm1.Lines.Add('Incorrect value on line ' + IntToStr(LineNum) + ': "' + ss + '"');
+          LogError('Incorrect value on line ' + IntToStr(LineNum) + ': "' + ss + '"');
           if ViewOnlyMode then ShowMessage('Incorrect value on line ' + IntToStr(LineNum) + ': "' + ss + '"');
           SL.Destroy;
           CloseFile(F);
@@ -387,7 +400,7 @@ begin
   sDbg := HPdata[HPparamIdx].Name + ': ' + sValue; 
 
   if cbDebug.Checked then
-    mm1.Lines.Add(sDbg);  
+    LogError(sDbg);  
 end;
 
 procedure TFormHPmonitor.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -409,16 +422,16 @@ begin
   then
     begin
     gridData.Height := (gridData.DefaultRowHeight+1) * gridData.RowCount + 3 -200;
-    mm1.Height := 740 - gridData.Height;
+    mmLog.Height := 740 - gridData.Height;
     end
   else
     begin
     gridData.Height := (gridData.DefaultRowHeight+1) * gridData.RowCount + 3;
-    mm1.Height := 740 - gridData.Height;
-    mm1.Clear;
+    mmLog.Height := 740 - gridData.Height;
+    mmLog.Clear;
     end;
 
-  mm1.Top := gridData.Top + gridData.Height + 6;   
+  mmLog.Top := gridData.Top + gridData.Height + 6;   
 end;
 
 procedure TFormHPmonitor.cbReadConstatntlyClick(Sender: TObject);
@@ -430,7 +443,7 @@ procedure TFormHPmonitor.gridDataClick(Sender: TObject);
 begin
   HPparamIdx := gridData.Row;
   if cbDebug.Checked then
-    mm1.Lines.Add('Next parameter to read: ' + IntToStr(HPparamIdx) + ' ('+HPdata[HPparamIdx].Name+')');
+    LogError('Next parameter to read: ' + IntToStr(HPparamIdx) + ' ('+HPdata[HPparamIdx].Name+')');
 end;
 
 procedure TFormHPmonitor.timerAutoReadTimer(Sender: TObject);
@@ -521,7 +534,7 @@ var
   
 begin
   if cbDebug.Checked then
-    mm1.Lines.Add('Writting file...');
+    LogError('Writting file...');
   T := now();
 
   Line := DateTimeToStr(T) + ';';
@@ -567,11 +580,11 @@ var
   row, col : Integer;
   
 begin
-  if cbDebug.Checked then mm1.Lines.Add('Checking for any new errors on HP...');
+  if cbDebug.Checked then LogError('Checking for any new errors on HP...');
   NewHPErrorTime := FormErrors.ReadLastHPErrorTime();
   if LastHPErrorTime <> NewHPErrorTime then
     begin
-    mm1.Lines.Add('Reading all error history...');
+    LogError('Reading all error history...');
     FormErrors.btnReadErrClick(nil);
     EmailBody := 'Current time: ' + DateTimeToStr(now()) + CRLF;
     for row := 0 to FormErrors.GridErrors.RowCount-1 do
@@ -582,9 +595,9 @@ begin
         end;
       EmailBody := EmailBody + CRLF;
       end;
-    mm1.Lines.Add('Sending email...');
+    LogError('Sending email...');
     FormSendEmail.SendEmail('HP porocilo o napakah', EmailBody);    
-    mm1.Lines.Add('Complete.');
+    LogError('Complete.');
     end;  
   LastHPErrorTime := NewHPErrorTime;
 end;
@@ -592,14 +605,14 @@ end;
 
 procedure TFormHPmonitor.ChartScroll(Sender: TObject);
 begin
-  // mm1.Lines.Add('scroll');
+  // LogError('scroll');
   SenderChart := Sender;
   tmrScrollZoomCharts.Enabled := true;
 end;
 
 procedure TFormHPmonitor.ChartUndoZoom(Sender: TObject);
 begin
-  // mm1.Lines.Add('un zoom');
+  // LogError('un zoom');
   chart1.BottomAxis.Automatic := True;
   chart2.BottomAxis.Automatic := True;
   chart3.BottomAxis.Automatic := True;
@@ -610,7 +623,7 @@ var
   minn, maxx : Double;
   CH : Tchart;
 begin
-  // mm1.Lines.Add('zoom');
+  // LogError('zoom');
   if not(Sender is TChart) then exit;
   CH := TChart(Sender);
   if CH.Series[0].Count < 5 then exit; // do not zoom if chart is (almost) empty
