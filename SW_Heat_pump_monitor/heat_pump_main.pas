@@ -374,9 +374,9 @@ begin
   if HPdata[HPparamIdx].Series <> nil then
     begin
     HPdata[HPparamIdx].Series.AddXY(T, HPdata[HPparamIdx].Value);
-    // delete data older from 23 hrs (The fractional part of a TDateTime value is the time of day.)
+    // delete data older from 15 hrs (The fractional part of a TDateTime value is the time of day.)
     Told := HPdata[HPparamIdx].Series.XValue[0];
-    if (HPdata[HPparamIdx].Series.XValues.Count > 50) AND ((T - Told) > 0.96) then
+    if (HPdata[HPparamIdx].Series.XValues.Count > 50) AND ((T - Told) > (15/24)) then
       begin
       HPdata[HPparamIdx].Series.Delete(0);
       end;
