@@ -3,6 +3,12 @@ For WPM, WPM2 and compatible devices. Note - WPM3 does not have optical port any
 Connects to WPM2 (and compatible) control unit over optical interface and COM port to the computer.
 Windows 32-bit executable. Runs on every machine from XP to Win 11.
 
+## Instructions
+1. Build the IR cable.
+2. Install USB drivers for the cable.
+3. Download the .exe and both .dll files.
+4. Have fun exploring your heat pump :)
+
 ## Infrared cable
 Short instructions how to build the cable is in the folder "IR_cable_documentation".
 
@@ -21,7 +27,7 @@ If somebody would like to obtain the original ComfortSoft package, I have a loca
 ![Screenshot](/Screenshots/HP_WPM2_readout_2.PNG)
 
 ## WPM and WPM2 device
-If your device looks like this, than it is compatible for sure.
+If your device looks like this, then it is compatible for sure.
 
 ![WPM2](/Screenshots/wpm2_a.jpg)
 
