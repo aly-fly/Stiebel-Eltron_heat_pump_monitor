@@ -19,3 +19,10 @@ If somebody would like to obtain the original ComfortSoft package, I have a loca
 
 ## Screenshot
 ![Screenshot](/Screenshots/HP_WPM2_readout_2.PNG)
+
+## WPM and WPM2 device
+If your device looks like this, than it is compatible for sure.
+
+![WPM2](/Screenshots/wpm2_a.jpg)
+
+![WPM2](/Screenshots/wpm2_b.jpg)
