@@ -83,8 +83,8 @@ begin
       begin
       Result := False;
       PrintError('===== ERROR! =====' + CRLF +
-                'Exception class = '+E.ClassName + CRLF + 
-                'Exception message = '+E.Message);
+//              'Exception class = '+E.ClassName + CRLF + 
+                'Exception message = ' + Trim(E.Message));
       end;
   end;
   IdSMTP1.Disconnect;

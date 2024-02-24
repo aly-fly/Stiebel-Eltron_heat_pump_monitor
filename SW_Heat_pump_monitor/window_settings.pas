@@ -543,7 +543,7 @@ begin
   HPsettings[i].Scaling := 1/256;
   HPsettings[i].Units   := '';
   HPsettings[i].Series  := nil;
-  inc(i);
+//  inc(i);
   
 end;
 

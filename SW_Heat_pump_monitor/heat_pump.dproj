@@ -135,6 +135,10 @@
             <Form>FormSettings</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="TCP_server.pas">
+            <Form>FormTCPserver</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <None Include="_TO-DO.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

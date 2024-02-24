@@ -11,7 +11,8 @@ uses
   window_energy in 'window_energy.pas' {FormEnergy},
   window_errors in 'window_errors.pas' {FormErrors},
   SendEmail in 'SendEmail.pas' {FormSendEmail},
-  window_settings in 'window_settings.pas' {FormSettings};
+  window_settings in 'window_settings.pas' {FormSettings},
+  TCP_server in 'TCP_server.pas' {FormTCPserver};
 
 {$R *.res}
 
@@ -24,5 +25,6 @@ begin
   Application.CreateForm(TFormErrors, FormErrors);
   Application.CreateForm(TFormSendEmail, FormSendEmail);
   Application.CreateForm(TFormSettings, FormSettings);
+  Application.CreateForm(TFormTCPserver, FormTCPserver);
   Application.Run;
 end.

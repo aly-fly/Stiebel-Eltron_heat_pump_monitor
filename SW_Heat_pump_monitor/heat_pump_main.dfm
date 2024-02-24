@@ -90,6 +90,7 @@ object FormHPmonitor: TFormHPmonitor
       ParentFont = False
       ScrollBars = ssVertical
       TabOrder = 5
+      OnContextPopup = mmLogContextPopup
     end
     object cbReadConstatntly: TCheckBox
       Left = 101

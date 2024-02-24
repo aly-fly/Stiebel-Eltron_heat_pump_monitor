@@ -41,7 +41,8 @@ var
   
 begin
   BeforeReading();
-  Result := 0;
+  hh := 0;
+  mm := 0;
   
   SetLength(Data, 1);
   Data[0].Device := DEV_BOILER;

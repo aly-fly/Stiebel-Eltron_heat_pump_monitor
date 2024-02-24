@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Samples.Spin, Orodja, serial_comm,
   VclTee.TeeGDIPlus, VCLTee.TeEngine, VCLTee.Series, VCLTee.TeeProcs, VCLTee.Chart, Vcl.Grids, inifiles,
   window_test, window_energy, window_errors, window_settings, heat_pump_comm,
-  SendEmail;
+  SendEmail, TCP_server;
 
 const
   FN1 : string = '.\Temperatures_';
@@ -79,6 +79,7 @@ type
     procedure tmrStartupTimer(Sender: TObject);
     procedure btnErrorsClick(Sender: TObject);
     procedure btnSettingsClick(Sender: TObject);
+    procedure mmLogContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
   private
     HPparamIdx : Integer;
     SenderChart : TObject;
@@ -129,6 +130,11 @@ begin
   DateFormat.LongDateFormat  := 'DD.MM. HH:MM';
 
   mmLog.Lines.Add('['+DateTimeToStr(Now(), DateFormat)+'] ' + txt);
+end;
+
+procedure TFormHPmonitor.mmLogContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
+begin
+  mmLog.Clear;
 end;
 
 function  TFormHPmonitor.HPCommReadLog(var Dataset : TAHPdata; Didx : Integer; Test : Boolean) : Boolean;
@@ -212,7 +218,7 @@ begin
   FormTest.btnScanAllDevReg.Enabled := True;
   FormTest.btnReadMan.Enabled := True;
 
-  mmLog.Clear;
+//  mmLog.Clear;
 
   // 0d 00 0d 01 00 0b 00 00 00 00 00 26 	 55 55 55 55 55 55 55 55 55 55 03 52  '0d PC	'0d PC	'01 Read	'000b	'0000	'0000	'0026
   // check connection
@@ -499,17 +505,33 @@ begin
   FormSendEmail.PrintDebug := DisplayDebug;
   FormSendEmail.PrintError := DisplayError;
 
+  FormTCPserver.PrintDebug := DisplayDebug;
+  FormTCPserver.PrintError := DisplayError;
+
   iniFileName := ChangeFileExt(ParamStr(0), '.ini');
   IniFile := TMemIniFile.Create(iniFileName);
+  // email settings
   FormSettings.edMailLoginUser.Text := TrimEmail(      IniFile.ReadString('EMAIL', 'LoginUser', ''));
   FormSettings.edMailLoginPass.Text := Trim2    (      IniFile.ReadString('EMAIL', 'LoginPass', ''));
   FormSettings.edMailAddressReceiver.Text := TrimEmail(IniFile.ReadString('EMAIL', 'ReceiverAddress', ''));
-  IniFile.Free;
-  FormSettings.UpdateEmailData(nil);
-  
+  // TCP server settings
+  FormTCPserver.TCPport := IniFile.ReadInteger('SERVER', 'TCPport', 0);
+  IniFile.Free;  
   
   cbDebug.Checked := PrintDebugMsg;
   cbDebugClick(nil);  
+
+  FormSettings.UpdateEmailData(nil);
+  if FormTCPserver.TCPport = 0 then
+    begin
+    LogError('SERVER and TCPport are not defined. Server is disabled.');
+    end
+  else
+    begin
+    DisplayDebug('Starting server on port ' + IntToStr(FormTCPserver.TCPport));
+    FormTCPserver.ServerStart;
+    end;
+  
   btnComSearchClick(nil);
   if ddPortList.Items.Count > 0 then
     begin
@@ -642,7 +664,6 @@ begin
   chart2.BottomAxis.Maximum := maxx;
   chart3.BottomAxis.Maximum := maxx;
 end;
-
 
 procedure TFormHPmonitor.btnTestClick(Sender: TObject);
 begin
@@ -994,7 +1015,7 @@ begin
   HPdata[i].Scaling := 1;
   HPdata[i].Units   := ' min';
   HPdata[i].Series  := nil;
-  inc(i);
+//  inc(i);
    
   gridData.RowCount := Length(HPdata);
   gridData.ColWidths[0] := 200;
@@ -1007,6 +1028,9 @@ begin
     gridData.Cells[0,i] := HPdata[i].Name;
     end;
   HPparamIdx := 0;  
+
+  // link source table of the data to the server
+  ServerData := gridData;
 
 // ===================================================================================================================  
   
