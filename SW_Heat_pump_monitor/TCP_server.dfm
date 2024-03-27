@@ -20,7 +20,7 @@ object FormTCPserver: TFormTCPserver
     OnStatus = IdTCPServerStatus
     Bindings = <>
     DefaultPort = 0
-    MaxConnections = 5
+    MaxConnections = 20
     OnConnect = IdTCPServerConnect
     OnDisconnect = IdTCPServerDisconnect
     OnException = IdTCPServerException
@@ -28,5 +28,12 @@ object FormTCPserver: TFormTCPserver
     OnExecute = IdTCPServerExecute
     Left = 160
     Top = 88
+  end
+  object tmrKickAllClients: TTimer
+    Enabled = False
+    Interval = 900000
+    OnTimer = tmrKickAllClientsTimer
+    Left = 368
+    Top = 96
   end
 end

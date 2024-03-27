@@ -4,8 +4,14 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, IdBaseComponent, IdComponent, IdCustomTCPServer, IdTCPServer, IdContext, IdStack;
-           
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls,
+  IdBaseComponent, IdComponent, IdCustomTCPServer, IdTCPServer, IdContext, IdStack, IdStackConsts;
+
+const
+  RW_TIMEOUT = 10*1000;
+  KEEPALIVE_TIMEOUT = 5*60*1000;
+  KEEPALIVE_INTERVAL = 60*1000;
+             
 type
   TServerParameter = record
     Command : AnsiString;
@@ -16,6 +22,7 @@ type
 type
   TFormTCPserver = class(TForm)
     IdTCPServer: TIdTCPServer;
+    tmrKickAllClients: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure IdTCPServerConnect(AContext: TIdContext);
     procedure IdTCPServerDisconnect(AContext: TIdContext);
@@ -24,11 +31,13 @@ type
     procedure IdTCPServerListenException(AThread: TIdListenerThread; AException: Exception);
     procedure IdTCPServerStatus(ASender: TObject; const AStatus: TIdStatus; const AStatusText: string);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure tmrKickAllClientsTimer(Sender: TObject);
   private
     procedure Display(p_message : string; Debug : Boolean);
     procedure GetLocalIPAddress(var List: TStringlist);
     procedure ShowNumberOfClients(p_disconnected : Boolean=False);
     procedure BroadcastMessage(p_message : string);
+    procedure KickAllClients;
     function ProcessCommandFromClient(sCommand : AnsiString; var sResponse : AnsiString) : Boolean;
   public
     PrintDebug: procedure(sss : string);
@@ -101,10 +110,14 @@ begin
   for i := 0 to LocalIPs.Count-1 do
     txt := txt + LocalIPs.Strings[i] + '  ';
   Display(txt, false);
+
+  tmrKickAllClients.Interval := 15*60*1000; // check and cleanup every 15 minutes
+  tmrKickAllClients.Enabled := True;
 end;
 
 procedure TFormTCPserver.ServerStop;
 begin
+  tmrKickAllClients.Enabled := False;
   if NOT IdTCPServer.Active then Exit;
 
 
@@ -173,6 +186,12 @@ begin
   // ... display the number of clients connected
   ShowNumberOfClients();
 
+  AContext.Binding.SetKeepAliveValues(True, KEEPALIVE_TIMEOUT, KEEPALIVE_INTERVAL);
+  AContext.Binding.SetSockOpt(id_SOL_SOCKET, Id_SO_KEEPALIVE, 1);
+  AContext.Binding.SetSockOpt(id_SOL_SOCKET, Id_SO_RCVTIMEO, RW_TIMEOUT);
+  AContext.Binding.SetSockOpt(id_SOL_SOCKET, Id_SO_SNDTIMEO, RW_TIMEOUT);
+  AContext.Connection.IOHandler.ReadTimeout := RW_TIMEOUT;
+  
   // ... CLIENT CONNECTED:
   if Port = TCPport then
     begin
@@ -289,6 +308,32 @@ begin
   end;
 end;
 
+procedure TFormTCPserver.KickAllClients;
+var
+  tmpList      : TList;
+  contexClient : TidContext;
+  i            : integer;
+  
+begin
+  // ... get context Locklist
+  tmpList  := IdTCPServer.Contexts.LockList;
+  try
+    i := 0;
+    while ( i < tmpList.Count ) do begin
+      // ... get context (thread of i-client)
+      contexClient := tmpList[i];
+
+      // ... disconnect the client
+      contexClient.Connection.IOHandler.CloseGracefully;
+      i := i + 1;
+    end;
+
+  finally
+    // ... unlock list of clients!
+    IdTCPServer.Contexts.UnlockList;
+  end;
+end;
+
 procedure TFormTCPserver.ShowNumberOfClients(p_disconnected : Boolean=False);
 var
     nClients : integer;
@@ -304,6 +349,27 @@ begin
   if p_disconnected then dec(nClients);
 
   Display('SERVER: Clients connected = ' + IntToStr(nClients), true);
+end;
+
+procedure TFormTCPserver.tmrKickAllClientsTimer(Sender: TObject);
+var
+    nClients : integer;
+begin
+  if not IdTCPServer.Active then
+    begin
+    tmrKickAllClients.Enabled := False;
+    exit;
+    end;
+
+  // get number of clients connected
+  try
+    nClients := IdTCPServer.Contexts.LockList.Count;
+  finally
+    IdTCPServer.Contexts.UnlockList;
+  end;
+
+  // cleanup of the old unused connections, probably already disconnected clients
+  if nClients > (IdTCPServer.MaxConnections / 2) then KickAllClients();
 end;
 
 // Main command processor. Ignores CR / LF and other special chars

@@ -2,4 +2,4 @@
 
 - param: heating power requirement setting
 - param: room influence setting
-- min/max limits; errors; email
+- min/max limits
