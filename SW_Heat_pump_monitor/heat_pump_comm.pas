@@ -242,7 +242,7 @@ end;
 
 function  HPCommWrite(var Dataset : TAHPdata; Didx : Integer) : Boolean;
 var
-  Wdata : u16;
+  wDataToWrite : u16;
   sResponse,
   sChecksum,
   sMyChecksum : AnsiString;
@@ -251,17 +251,17 @@ begin
   Result := False;
   // select source of the value to write
   if Dataset[Didx].Value < -99999 // invalid
-    then Wdata := Dataset[Didx].Data
-    else Wdata := u16(s16(Round(Dataset[Didx].Value / Dataset[Didx].Scaling)));
+    then wDataToWrite := Dataset[Didx].Data
+    else wDataToWrite := u16(s16(Round(Dataset[Didx].Value / Dataset[Didx].Scaling)));
 
   // do not communicate if data has not changed
-  if Wdata = Dataset[Didx].DataLastRead then 
+  if wDataToWrite = Dataset[Didx].DataLastRead then
     begin
     Result := True;
     exit;
     end;
    
-  HPCompileRequest(Dataset, Didx, QRY_WRITE, Wdata, False);
+  HPCompileRequest(Dataset, Didx, QRY_WRITE, wDataToWrite, False);
   if not HPCommunicate(Dataset, Didx) then exit;
 
   // verify response  
@@ -280,8 +280,11 @@ begin
     Exit;
     end
   else
+    begin
     HPLastMessage := HPLastMessage + 'Write OK. ';
-    
+    Dataset[Didx].DataLastRead := wDataToWrite; // save new value as if it was read back; to properly write if data is written multiple times without reading in between
+    end;
+
 (*
   TX	RX	source	destination	query	type	register	value	checksum	Column1	source2	destination3	query4	type5	register6	value7	checksum8
   0d 00 06 00 01 fa 00 05 00 96 01 a9 	 55 55 55 55 55 55 55 55 55 55 03 52 	'0d	'06	'00 write	'01fa	'0005 ROOM TARGET TEMP_I	'0096	'01a9		'55	'55	'55	'5555	'5555	'5555	'0352

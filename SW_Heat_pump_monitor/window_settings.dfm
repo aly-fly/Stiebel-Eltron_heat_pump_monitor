@@ -55,7 +55,7 @@ object FormSettings: TFormSettings
     Caption = 'Water'
   end
   object Label5: TLabel
-    Left = 32
+    Left = 29
     Top = 193
     Width = 60
     Height = 13
@@ -93,6 +93,13 @@ object FormSettings: TFormSettings
     Width = 67
     Height = 13
     Caption = 'Heating curve'
+  end
+  object Label11: TLabel
+    Left = 22
+    Top = 227
+    Width = 67
+    Height = 13
+    Caption = 'Anti-legionella'
   end
   object edC1Day: TEdit
     Left = 95
@@ -265,5 +272,12 @@ object FormSettings: TFormSettings
     Width = 57
     Height = 21
     TabOrder = 12
+  end
+  object cbAntiLegionella: TCheckBox
+    Left = 104
+    Top = 226
+    Width = 29
+    Height = 17
+    TabOrder = 13
   end
 end

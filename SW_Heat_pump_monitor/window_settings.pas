@@ -38,6 +38,8 @@ type
     Label10: TLabel;
     edHtgCurve1: TEdit;
     edHtgCurve2: TEdit;
+    cbAntiLegionella: TCheckBox;
+    Label11: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
@@ -49,7 +51,7 @@ type
   private
     Stop : Boolean;
     function  HPCommReadLog(var Dataset : TAHPdata; Didx : Integer; Test : Boolean) : Boolean;
-    function  HPCommWriteLog(var Dataset : TAHPdata; Didx : Integer) : Boolean;    
+    function  HPCommWriteLog(var Dataset : TAHPdata; Didx : Integer) : Boolean;
   public
     BeforeReading: procedure;
     AfterReading: procedure;
@@ -191,6 +193,9 @@ begin
   if not HPCommReadLog(HPsettings, 8, False) then goto error;
   edPartyHrs.Text := FloatToStrF(HPsettings[8].Value, ffFixed, 5, 0);
 
+  if not HPCommReadLog(HPsettings, 18, False) then goto error;
+  cbAntiLegionella.Checked := HPsettings[18].Data > 0; // use raw data, not scaled value
+
   if not HPCommReadLog(HPsettings, 9, False) then goto error; // current time
   lblCurrTime.Caption := LeadingZeros(((HPsettings[9].Data      ) AND $FF), 2) + ':' +  // HH
                          LeadingZeros(((HPsettings[9].Data SHR 8) AND $FF), 2);         // MM 
@@ -246,7 +251,7 @@ begin
   // loopback test
   if not HPCommReadLog(HPsettings, 0, True) then goto error;
 
-  // op mode
+  // operation mode
   case ddHPMode.ItemIndex of
     0: HPsettings[1].Data := $0100; // standby
     1: HPsettings[1].Data := $0200; // automatic
@@ -255,8 +260,7 @@ begin
     4: HPsettings[1].Data := $0500; // water only
     5: HPsettings[1].Data := $0000; // emergency
   end;
-  
-  HPsettings[1].Value := -999999; // use Data variable to write value
+  HPsettings[1].Value := -999999; // use Data variable to write value; do not convert Float
   if not HPCommWriteLog(HPsettings, 1) then goto error;
 
   if not WriteStr(edC1Day.Text, 2) then goto error;
@@ -269,12 +273,16 @@ begin
   if not WriteStr(edHtgCurve2.Text, 16) then goto error; 
   if not WriteStr(edPartyHrs.Text, 8) then goto error;
 
+  if cbAntiLegionella.Checked then HPsettings[18].Data := 256 else HPsettings[18].Data := 0;
+  HPsettings[18].Value := -1000000; // use Data variable to write value; do not convert Float
+  if not HPCommWriteLog(HPsettings, 18) then goto error;
+
   // current time
   Time := GetTime();
   DecodeTime(Time, hh, mm, ss, ms);
   // MSB = minutes, LSB = hours: 060B = "11:06"
-  HPsettings[9].Data := ((mm SHL 8) AND $FF00) OR (hh AND $00FF); 
-  HPsettings[9].Value := -999999; // use Data variable to write value
+  HPsettings[9].Data := ((mm SHL 8) AND $FF00) OR (hh AND $00FF);
+  HPsettings[9].Value := -999999; // use Data variable to write value; do not convert Float
   PrintDebug('Writing current time: 0x' + IntToHex(HPsettings[9].Data, 4));
   if not HPCommWriteLog(HPsettings, 9) then goto error;
   // current date and time in different registers
@@ -332,12 +340,12 @@ begin
   csm := Copy(S, 21, 4);
 *)  
 
-  SetLength(HPsettings, 18);
+  SetLength(HPsettings, 19); // 0..18
   i := 0;
 
   // 0d 00 0d 01 00 0b 00 00 00 00 00 26 	 55 55 55 55 55 55 55 55 55 55 03 52  '0d PC	'0d PC	'01 Read	'000b	'0000	'0000	'0026
   //0 : TXD := #$0d#$00#$0d#$01#$00#$0b#$00#$00#$00#$00#$00#$26;
-
+  // 0
   HPsettings[i].Name    := 'Loopback test';
   HPsettings[i].Request := #$0d#$00#$0d#$01#$00#$0b#$00#$00#$00#$00#$00#$26;   
   HPsettings[i].Device  := DEV_OPT_PC;
@@ -355,6 +363,7 @@ begin
    set mode standby
   0d 00 03 00 00 fa 01 12 01 00 01 1e 	 55 55 55 55 55 55 55 55 55 55 03 52 	'0d	'03	'00 write	'00fa	'0112 PROGRAM SWITCH	'0100	'011e		'55	'55	'55	'5555	'5555	'5555	'0352
 *)
+  // 1
   HPsettings[i].Name    := 'Operational Mode';
   HPsettings[i].Request := '';
   HPsettings[i].Device  := DEV_BOILER;
@@ -369,6 +378,7 @@ begin
   TX	RX	source	destination	query	type	register	value	checksum	Column1	source2	destination3	query4	type5	register6	value7	checksum8
   0d 00 06 00 01 fa 00 05 00 96 01 a9 	 55 55 55 55 55 55 55 55 55 55 03 52 	'0d	'06	'00 write	'01fa	'0005 ROOM TARGET TEMP_I	'0096	'01a9		'55	'55	'55	'5555	'5555	'5555	'0352
 *)
+  // 2
   HPsettings[i].Name    := 'Heating circ 1 Day';
   HPsettings[i].Request := '';
   HPsettings[i].Device  := DEV_CONTROL;
@@ -382,6 +392,7 @@ begin
 (* set night temp 21,5 C
   0d 00 06 00 01 fa 00 08 00 d7 01 ed 	 55 55 55 55 55 55 55 55 55 55 03 52 	'0d	'06	'00 write	'01fa	'0008 ROOM TARGET TEMP_NIGHT	'00d7	'01ed		'55	'55	'55	'5555	'5555	'5555	'0352
 *)
+  // 3
   HPsettings[i].Name    := 'Heating circ 1 Night';
   HPsettings[i].Request := '';
   HPsettings[i].Device  := DEV_CONTROL;
@@ -392,6 +403,7 @@ begin
   HPsettings[i].Series  := nil;
   inc(i);
 
+  // 4
   HPsettings[i].Name    := 'Heating circ 2 Day';
   HPsettings[i].Request := '';
   HPsettings[i].Device  := DEV_CONTROL;
@@ -401,7 +413,8 @@ begin
   HPsettings[i].Units   := ' °C';
   HPsettings[i].Series  := nil;
   inc(i);
-  
+
+  // 5
   HPsettings[i].Name    := 'Heating circ 2 Night';
   HPsettings[i].Request := '';
   HPsettings[i].Device  := DEV_CONTROL;
@@ -412,6 +425,7 @@ begin
   HPsettings[i].Series  := nil;
   inc(i);
 
+  // 6
   HPsettings[i].Name    := 'Hot water set Day';
   HPsettings[i].Request := '';
   HPsettings[i].Device  := DEV_BOILER;
@@ -421,7 +435,8 @@ begin
   HPsettings[i].Units   := ' °C';
   HPsettings[i].Series  :=  nil;
   inc(i);
-  
+
+  // 7
   HPsettings[i].Name    := 'Hot water set Night';
   HPsettings[i].Request := '';
   HPsettings[i].Device  := DEV_BOILER;
@@ -432,6 +447,7 @@ begin
   HPsettings[i].Series  :=  nil;
   inc(i);
 
+  // 8
   HPsettings[i].Name    := 'Party hours';
   HPsettings[i].Request := '';
   HPsettings[i].Device  := DEV_BOILER;
@@ -441,6 +457,7 @@ begin
   HPsettings[i].Units   := '';
   HPsettings[i].Series  := nil;
   inc(i);
+
   // 9
   HPsettings[i].Name    := 'Current time';
   HPsettings[i].Request := '';
@@ -459,7 +476,8 @@ begin
   { "STUNDE"                                           , 0x0125, et_little_endian},
   { "MINUTE"                                           , 0x0126, et_little_endian},
   { "SEKUNDE"                                          , 0x0127, et_little_endian},
-*)  
+*)
+
   // 10
   HPsettings[i].Name    := 'DAY';
   HPsettings[i].Request := '';
@@ -471,6 +489,7 @@ begin
   HPsettings[i].Series  := nil;
   inc(i);
 
+  // 11
   HPsettings[i].Name    := 'MONTH';
   HPsettings[i].Request := '';
   HPsettings[i].Device  := DEV_BOILER;
@@ -481,6 +500,7 @@ begin
   HPsettings[i].Series  := nil;
   inc(i);
 
+  // 12
   HPsettings[i].Name    := 'YEAR';
   HPsettings[i].Request := '';
   HPsettings[i].Device  := DEV_BOILER;
@@ -491,6 +511,7 @@ begin
   HPsettings[i].Series  := nil;
   inc(i);
 
+  // 13
   HPsettings[i].Name    := 'HOUR';
   HPsettings[i].Request := '';
   HPsettings[i].Device  := DEV_BOILER;
@@ -500,6 +521,7 @@ begin
   HPsettings[i].Units   := '';
   HPsettings[i].Series  := nil;
   inc(i);
+
   // 14
   HPsettings[i].Name    := 'MINUTES';
   HPsettings[i].Request := '';
@@ -543,8 +565,23 @@ begin
   HPsettings[i].Scaling := 1/256;
   HPsettings[i].Units   := '';
   HPsettings[i].Series  := nil;
-//  inc(i);
-  
+  inc(i);
+
+  (*
+  Group    Device    Circuit    Register (hex)    Description                        Conversion
+  Settings    3         0            101          Anti-legionella (high temperature)    1/256
+  *)
+  // 18
+  HPsettings[i].Name    := 'Anti-Legionella';
+  HPsettings[i].Request := '';
+  HPsettings[i].Device  := DEV_BOILER;
+  HPsettings[i].Circuit := CIRC_GEN;
+  HPsettings[i].RegAddr := $0101;
+  HPsettings[i].Scaling := 1/256;
+  HPsettings[i].Units   := '';
+  HPsettings[i].Series  := nil;
+  inc(i);
+
 end;
 
 end.
